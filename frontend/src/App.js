@@ -7,12 +7,15 @@ import Home from './routes/Home';
 import Login from './routes/Login';
 import ErrorPage from './routes/ErrorPage';
 import './App.css';
+import AutorizationContext from './AutorizationContext';
+import AutorizationProvider from './AutorizationProvider';
 
 const App = () => {
+  const auth = localStorage.getItem('admin');
   const router = createBrowserRouter([
     {
       path: '/',
-      element: <Home />,
+      element: auth ? <Home /> : <Login />,
       errorElement: <ErrorPage />,
     },
     {
@@ -21,7 +24,13 @@ const App = () => {
     },
   ]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <AutorizationProvider>
+      <RouterProvider router={router} />
+    </AutorizationProvider>
+  );
 };
+
+App.ContextType = AutorizationContext;
 
 export default App;
