@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable consistent-return */
 import React, { useEffect } from 'react';
 import axios from 'axios';
