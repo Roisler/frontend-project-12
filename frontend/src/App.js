@@ -1,21 +1,37 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import {
   createBrowserRouter,
   RouterProvider,
+  Navigate,
+  useLocation,
 } from 'react-router-dom';
 import Home from './routes/Home';
 import Login from './routes/Login';
 import ErrorPage from './routes/ErrorPage';
 import './App.css';
-import AutorizationContext from './AutorizationContext';
-import AutorizationProvider from './AutorizationProvider';
+import { AuthProvider } from './AutorizationContext';
+
+const PrivateRoute = ({ children }) => {
+  const token = localStorage.getItem('admin');
+  const location = useLocation();
+  if (token) {
+    return children;
+  }
+  return (
+    <Navigate to="/login" state={{ from: location }} />
+  );
+};
 
 const App = () => {
-  const auth = localStorage.getItem('admin');
   const router = createBrowserRouter([
     {
       path: '/',
-      element: auth ? <Home /> : <Login />,
+      element: (
+        <PrivateRoute>
+          <Home />
+        </PrivateRoute>
+      ),
       errorElement: <ErrorPage />,
     },
     {
@@ -25,12 +41,10 @@ const App = () => {
   ]);
 
   return (
-    <AutorizationProvider>
+    <AuthProvider>
       <RouterProvider router={router} />
-    </AutorizationProvider>
+    </AuthProvider>
   );
 };
-
-App.ContextType = AutorizationContext;
 
 export default App;

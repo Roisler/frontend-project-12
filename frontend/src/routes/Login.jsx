@@ -1,43 +1,47 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Form,
   FormControl,
   Button,
 } from 'react-bootstrap';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
-import AutorizationContext from '../AutorizationContext';
+import useAuth from '../AutorizationContext';
 
 const Login = () => {
-  const context = React.useContext(AutorizationContext);
-  const [error, setError] = useState();
-  /* const { statusAuth } = context;
-     useEffect(() => {
-    console.log(statusAuth);
-    if (statusAuth) {
-      redirect('/');
+  const auth = useAuth();
+  const [authFailed, setAuthFailed] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (auth.isAuth) {
+      const { from } = location.state || { from: { pathname: '/' } };
+      navigate(from);
     }
-  }, [statusAuth]); */
+  }, [auth.isAuth]);
   const formik = useFormik({
     initialValues: {
       username: '',
       password: '',
     },
-    onSubmit: async () => {
-      await axios.post('/api/v1/login', { username: formik.values.username, password: formik.values.password })
-        .then((response) => {
-          const { username, token } = response.data;
-          localStorage.setItem(username, token);
-          context.logIn();
-          setError();
-          window.location.href = '/';
-        })
-        .catch((e) => {
-          setError(e);
-          console.log(e);
-        });
+    onSubmit: async (values) => {
+      setAuthFailed(false);
+      try {
+        const response = await axios.post('/api/v1/login', values);
+        const { username, token } = response.data;
+        localStorage.setItem(username, JSON.stringify({ userId: username, token }));
+        auth.logIn();
+      } catch (err) {
+        formik.setSubmitting(false);
+        if (err.name === 'AxiosError' && err.response.status === 401) {
+          setAuthFailed(true);
+          return;
+        }
+        throw err;
+      }
     },
     validationSchema: yup.object({
       username: yup.string().min(2, 'Должно быть не менее 2 символов').required('Обязательное поле'),
@@ -57,7 +61,7 @@ const Login = () => {
           value={formik.values.username}
           placeholder="Ваш ник"
           onChange={formik.handleChange}
-          className={error ? 'is-invalid' : ''}
+          isInvalid={authFailed}
         />
         <Form.Label htmlFor="username">Ваш ник</Form.Label>
       </Form.Group>
@@ -69,10 +73,10 @@ const Login = () => {
           placeholder="Пароль"
           onChange={formik.handleChange}
           value={formik.values.password}
-          className={error ? 'is-invalid' : ''}
+          isInvalid={authFailed}
         />
         <Form.Label htmlFor="password">Пароль</Form.Label>
-        {error ? <div className="invalid-tooltip">Неверные имя пользователя или пароль</div> : null}
+        <Form.Control.Feedback type="invalid">Неверные имя пользователя или пароль</Form.Control.Feedback>
       </Form.Group>
       <Button type="submit">Отправить</Button>
     </Form>
