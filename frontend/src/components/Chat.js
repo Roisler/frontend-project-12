@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,19 +16,26 @@ import { selectors as messagesSelectors, actions as messagesActions } from '../s
 const socket = io.connect();
 const Chat = ({ user, activeChannel }) => {
   const dispatch = useDispatch();
+  const messages = useSelector(messagesSelectors.selectAll);
+  const [currentMessage, setCurrentMessage] = useState();
+  useEffect(() => {
+    if (!currentMessage) return;
+    socket.emit('newMessage', currentMessage);
+    dispatch(messagesActions.addMessage(currentMessage));
+    setCurrentMessage();
+  }, [currentMessage]);
   const formik = useFormik({
     initialValues: {
       body: '',
     },
-    onSubmit: async (values) => {
+    onSubmit: (values) => {
       const message = {
         ...values,
         username: user.username,
         channelId: activeChannel.id,
         id: uniqueId(),
       };
-      await socket.emit('newMessage', message);
-      dispatch(messagesActions.addMessage(message));
+      setCurrentMessage(message);
       formik.resetForm();
     },
     validationSchema: yup.object({
@@ -36,7 +43,6 @@ const Chat = ({ user, activeChannel }) => {
     }),
   });
 
-  const messages = useSelector(messagesSelectors.selectAll);
   const getTotalMessages = (id) => messages.filter((message) => message.channelId === id).length;
 
   return (
