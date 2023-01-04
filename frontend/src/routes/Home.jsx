@@ -6,24 +6,25 @@ import {
   Container,
   Row,
   Col,
-  Nav,
-  NavItem,
-  Button,
   // Form,
   // InputGroup,
 } from 'react-bootstrap';
 // import { useFormik } from 'formik';
 // import * as yup from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
-// import { io } from 'socket.io-client';
-import { selectors as channelsSelectors, actions as channelsActions } from '../slices/channelsSlice';
+import { useDispatch } from 'react-redux';
+import { io } from 'socket.io-client';
+import { actions as channelsActions } from '../slices/channelsSlice';
 import { actions as messagesActions } from '../slices/messagesSlice';
 import Chat from '../components/Chat';
+import AddChannelModal from '../components/modals/AddChannel';
+import RenameChannelModal from '../components/modals/RenameChannel';
+import Channels from '../components/Channels';
 
-// const socket = io();
+const socket = io();
 
 const Home = () => {
   const [activeChannel, setActiveChannel] = useState({});
+  const [activeModal, setActiveModal] = useState();
   const dispatch = useDispatch();
 
   const user = JSON.parse(localStorage.getItem('user'));
@@ -35,6 +36,7 @@ const Home = () => {
         { headers: { Authorization: `Bearer ${user.token}` } },
       );
       const { channels, messages, currentChannelId } = response.data;
+      console.log(response.data);
       dispatch(channelsActions.addChannels(channels));
       dispatch(messagesActions.addMessages(messages));
       const currentChannel = channels.find(({ id }) => id === currentChannelId);
@@ -42,47 +44,49 @@ const Home = () => {
     };
     getContent();
   }, []);
-  /* const formik = useFormik({
-    initialValues: {
-      body: '',
-    },
-    onSubmit: async (values) => {
-      const message = { ...values, username: user.username, channelId: activeChannel.id };
-      await socket.emit('newMessage', message);
-      dispatch(messagesActions.addMessage(message));
-      formik.resetForm();
-    },
-    validationSchema: yup.object({
-      body: yup.string().required('Введите сообщение!'),
-    }),
-  }); */
-  const channels = useSelector(channelsSelectors.selectAll);
-  // const messages = useSelector(messagesSelectors.selectAll);
-  // const getTotalMessages = (id) => messages.filter((message) => message.channelId === id).length;
+
+  useEffect(() => {
+    socket.on('newMessage', (payload) => {
+      dispatch(messagesActions.addMessage(payload));
+    });
+    socket.on('newChannel', (payload) => {
+      dispatch(channelsActions.addChannel(payload));
+    });
+  }, []);
+
+  const handleShow = (modal) => () => setActiveModal(modal);
+
+  const getVariant = (channelName) => {
+    if (activeChannel.name === channelName) {
+      return 'secondary';
+    }
+    return 'light';
+  };
 
   return (
     <Container className="h-100 my-4 overflow-hidden rounded shadow">
       <Row className="h-100 bg-white flex-md-row">
         <Col md={2} className="col-4 col-md-2 border-end pt-5 px-0 bg-light">
-          <div className="d-flex justify-content-between mb-2 ps-4 pe-2">
-            <span>Каналы</span>
-          </div>
-          <Nav fill as="ul" variant="pills" className="flex-column px-2">
-            {channels.map((channel) => {
-              const { id, name } = channel;
-              return (
-                <NavItem as="li" key={id} className="w-100" onClick={() => setActiveChannel(channel)}>
-                  <Button variant={activeChannel.name === name ? 'secondary' : 'light'} className="w-100 rounded-0 text-start">
-                    <span className="me-1">#</span>
-                    {name}
-                  </Button>
-                </NavItem>
-              );
-            })}
-          </Nav>
+          <Channels
+            activeChannel={activeChannel}
+            setActiveChannel={setActiveChannel}
+            handleShow={handleShow}
+            getVariant={getVariant}
+          />
         </Col>
-        <Chat user={user} activeChannel={activeChannel} />
+        <Col className="h-100 p-0">
+          <Chat user={user} activeChannel={activeChannel} />
+        </Col>
       </Row>
+      <AddChannelModal
+        show={activeModal === 'add'}
+        onHide={() => setActiveModal('')}
+        setChannel={setActiveChannel}
+      />
+      <RenameChannelModal
+        show={activeModal === 'rename'}
+        onHide={() => setActiveModal('')}
+      />
     </Container>
   );
 };

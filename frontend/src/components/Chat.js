@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import io from 'socket.io-client';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,17 +13,21 @@ import {
 import { uniqueId } from 'lodash';
 import { selectors as messagesSelectors, actions as messagesActions } from '../slices/messagesSlice';
 
-const socket = io.connect();
+const socket = io();
 const Chat = ({ user, activeChannel }) => {
   const dispatch = useDispatch();
   const messages = useSelector(messagesSelectors.selectAll);
-  const [currentMessage, setCurrentMessage] = useState();
+  // const [currentMessage, setCurrentMessage] = useState();
   useEffect(() => {
+    socket.on('newMessage', (payload) => {
+      dispatch(messagesActions.addMessage(payload));
+    });
+  }, []);
+  /* useEffect(() => {
     if (!currentMessage) return;
-    socket.emit('newMessage', currentMessage);
     dispatch(messagesActions.addMessage(currentMessage));
     setCurrentMessage();
-  }, [currentMessage]);
+  }, [currentMessage]); */
   const formik = useFormik({
     initialValues: {
       body: '',
@@ -33,10 +37,13 @@ const Chat = ({ user, activeChannel }) => {
         ...values,
         username: user.username,
         channelId: activeChannel.id,
-        id: uniqueId(),
+        id: uniqueId('message_'),
       };
-      setCurrentMessage(message);
+      socket.emit('newMessage', message, (data) => {
+        console.log(data.status);
+      });
       formik.resetForm();
+      console.log(formik);
     },
     validationSchema: yup.object({
       body: yup.string().required('Введите сообщение!'),
@@ -80,8 +87,16 @@ const Chat = ({ user, activeChannel }) => {
                 className="border-0 p-0 ps-2"
                 onChange={formik.handleChange}
                 value={formik.values.body}
+                required
               />
-              <Button type="submit" variant="outline-primary" id="button-text" disabled={formik.isSubmitting}>Send</Button>
+              <Button
+                type="submit"
+                variant="outline-primary"
+                id="button-text"
+                disabled={formik.values.body === ''}
+              >
+                Send
+              </Button>
             </InputGroup>
           </Form>
         </div>
