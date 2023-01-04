@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, {
   createContext,
-  useContext,
   useState,
   useMemo,
 } from 'react';
@@ -28,4 +27,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export default () => useContext(AuthContext);
+export default AuthContext;

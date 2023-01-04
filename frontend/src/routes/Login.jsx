@@ -9,7 +9,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
-import useAuth from '../AutorizationContext';
+import useAuth from '../hooks/useAuth';
 
 const Login = () => {
   const auth = useAuth();
@@ -32,7 +32,7 @@ const Login = () => {
       try {
         const response = await axios.post('/api/v1/login', values);
         const { username, token } = response.data;
-        localStorage.setItem(username, JSON.stringify({ userId: username, token }));
+        localStorage.setItem('user', JSON.stringify({ username, token }));
         auth.logIn();
       } catch (err) {
         formik.setSubmitting(false);

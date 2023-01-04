@@ -13,7 +13,7 @@ import './App.css';
 import { AuthProvider } from './AutorizationContext';
 
 const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem('admin');
+  const token = localStorage.getItem('user');
   const location = useLocation();
   if (token) {
     return children;

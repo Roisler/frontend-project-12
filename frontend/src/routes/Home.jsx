@@ -9,16 +9,25 @@ import {
   Nav,
   NavItem,
   Button,
-  Form,
-  InputGroup,
+  // Form,
+  // InputGroup,
 } from 'react-bootstrap';
+// import { useFormik } from 'formik';
+// import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectors, actions as channelsActions } from '../slices/channelsSlice';
+// import { io } from 'socket.io-client';
+import { selectors as channelsSelectors, actions as channelsActions } from '../slices/channelsSlice';
+import { actions as messagesActions } from '../slices/messagesSlice';
+import Chat from '../components/Chat';
+
+// const socket = io();
 
 const Home = () => {
-  const [activeChannel, setActiveChannel] = useState();
+  const [activeChannel, setActiveChannel] = useState({});
   const dispatch = useDispatch();
-  const user = JSON.parse(localStorage.getItem('admin'));
+
+  const user = JSON.parse(localStorage.getItem('user'));
+
   useEffect(() => {
     const getContent = async () => {
       const response = await axios.get(
@@ -27,14 +36,30 @@ const Home = () => {
       );
       const { channels, messages, currentChannelId } = response.data;
       dispatch(channelsActions.addChannels(channels));
-      const activeChannelName = channels.find(({ id }) => id === currentChannelId).name;
-      setActiveChannel(activeChannelName);
-      console.log(messages);
+      dispatch(messagesActions.addMessages(messages));
+      const currentChannel = channels.find(({ id }) => id === currentChannelId);
+      setActiveChannel(currentChannel);
     };
     getContent();
   }, []);
-  const channels = useSelector(selectors.selectAll);
-  console.log(channels);
+  /* const formik = useFormik({
+    initialValues: {
+      body: '',
+    },
+    onSubmit: async (values) => {
+      const message = { ...values, username: user.username, channelId: activeChannel.id };
+      await socket.emit('newMessage', message);
+      dispatch(messagesActions.addMessage(message));
+      formik.resetForm();
+    },
+    validationSchema: yup.object({
+      body: yup.string().required('Введите сообщение!'),
+    }),
+  }); */
+  const channels = useSelector(channelsSelectors.selectAll);
+  // const messages = useSelector(messagesSelectors.selectAll);
+  // const getTotalMessages = (id) => messages.filter((message) => message.channelId === id).length;
+
   return (
     <Container className="h-100 my-4 overflow-hidden rounded shadow">
       <Row className="h-100 bg-white flex-md-row">
@@ -43,40 +68,20 @@ const Home = () => {
             <span>Каналы</span>
           </div>
           <Nav fill as="ul" variant="pills" className="flex-column px-2">
-            {channels.map(({ id, name }) => (
-              <NavItem as="li" key={id} className="w-100" onClick={() => setActiveChannel(name)}>
-                <Button variant={activeChannel === name ? 'secondary' : 'light'} className="w-100 rounded-0 text-start">
-                  <span className="me-1">#</span>
-                  {name}
-                </Button>
-              </NavItem>
-            ))}
+            {channels.map((channel) => {
+              const { id, name } = channel;
+              return (
+                <NavItem as="li" key={id} className="w-100" onClick={() => setActiveChannel(channel)}>
+                  <Button variant={activeChannel.name === name ? 'secondary' : 'light'} className="w-100 rounded-0 text-start">
+                    <span className="me-1">#</span>
+                    {name}
+                  </Button>
+                </NavItem>
+              );
+            })}
           </Nav>
         </Col>
-        <Col className="h-100 p-0">
-          <div className="d-flex flex-column h-100">
-            <div className="bg-light mb-4 p-3 shadow-sm small">
-              <p className="m-0"><b>{`# ${activeChannel}`}</b></p>
-              <span className="text-muted">0 сообщений</span>
-            </div>
-            <div id="messages-box" className="chat-messages overflow-auto px-5 " />
-            <div className="mt-auto px-5 py-3">
-              <Form className="py-1 border rounded-2">
-                <InputGroup has-validation>
-                  <Form.Control
-                    id="body"
-                    name="body"
-                    type="text"
-                    placeholder="Введите сообщение..."
-                    aria-describedby="basic-text"
-                    className="border-0 p-0 ps-2"
-                  />
-                  <Button type="submit" variant="outline-secondary" id="button-text" />
-                </InputGroup>
-              </Form>
-            </div>
-          </div>
-        </Col>
+        <Chat user={user} activeChannel={activeChannel} />
       </Row>
     </Container>
   );
