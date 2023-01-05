@@ -7,7 +7,6 @@ import * as yup from 'yup';
 import {
   Form,
   InputGroup,
-  Col,
   Button,
 } from 'react-bootstrap';
 import { uniqueId } from 'lodash';
@@ -53,55 +52,53 @@ const Chat = ({ user, activeChannel }) => {
   const getTotalMessages = (id) => messages.filter((message) => message.channelId === id).length;
 
   return (
-    <Col className="h-100 p-0">
-      <div className="d-flex flex-column h-100">
-        <div className="bg-light mb-4 p-3 shadow-sm small">
-          <p className="m-0"><b>{`# ${activeChannel.name}`}</b></p>
-          <span className="text-muted">{`${getTotalMessages(activeChannel.id)} сообщений`}</span>
-        </div>
-        <div id="messages-box" className="chat-messages overflow-auto px-5 ">
-          {messages
-            .filter((message) => message.channelId === activeChannel.id)
-            .map((message) => {
-              if (messages.length === 0) {
-                return null;
-              }
-              const { body, username, id } = message;
-              return (
-                <div key={id} className="text-break mb-2">
-                  <b>{username}</b>
-                  {`: ${body}`}
-                </div>
-              );
-            })}
-        </div>
-        <div className="mt-auto px-5 py-3">
-          <Form onSubmit={formik.handleSubmit} className="py-1 border rounded-2">
-            <InputGroup has-validation="true">
-              <Form.Control
-                id="body"
-                name="body"
-                type="text"
-                placeholder="Введите сообщение..."
-                aria-describedby="basic-text"
-                className="border-0 p-0 ps-2"
-                onChange={formik.handleChange}
-                value={formik.values.body}
-                required
-              />
-              <Button
-                type="submit"
-                variant="outline-primary"
-                id="button-text"
-                disabled={formik.values.body === ''}
-              >
-                Send
-              </Button>
-            </InputGroup>
-          </Form>
-        </div>
+    <div className="d-flex flex-column h-100">
+      <div className="bg-light mb-4 p-3 shadow-sm small">
+        <p className="m-0"><b>{`# ${activeChannel.name}`}</b></p>
+        <span className="text-muted">{`${getTotalMessages(activeChannel.id)} сообщений`}</span>
       </div>
-    </Col>
+      <div id="messages-box" className="chat-messages overflow-auto px-5 ">
+        {messages
+          .filter((message) => message.channelId === activeChannel.id)
+          .map((message) => {
+            if (messages.length === 0) {
+              return null;
+            }
+            const { body, username, id } = message;
+            return (
+              <div key={id} className="text-break mb-2">
+                <b>{username}</b>
+                {`: ${body}`}
+              </div>
+            );
+          })}
+      </div>
+      <div className="mt-auto px-5 py-3">
+        <Form onSubmit={formik.handleSubmit} className="py-1 border rounded-2">
+          <InputGroup has-validation="true">
+            <Form.Control
+              id="body"
+              name="body"
+              type="text"
+              placeholder="Введите сообщение..."
+              aria-describedby="basic-text"
+              className="border-0 p-0 ps-2"
+              onChange={formik.handleChange}
+              value={formik.values.body}
+              required
+            />
+            <Button
+              type="submit"
+              variant="outline-primary"
+              id="button-text"
+              disabled={formik.values.body === ''}
+            >
+              Send
+            </Button>
+          </InputGroup>
+        </Form>
+      </div>
+    </div>
   );
 };
 
