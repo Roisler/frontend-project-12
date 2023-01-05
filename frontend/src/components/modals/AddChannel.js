@@ -18,7 +18,6 @@ const AddChannelModal = ({ show, onHide, setChannel }) => {
     onSubmit: (values) => {
       socket.emit('newChannel', values, (response) => {
         const newChannel = response.data;
-        console.log(newChannel);
         setChannel(newChannel);
         onHide();
       });
@@ -48,7 +47,7 @@ const AddChannelModal = ({ show, onHide, setChannel }) => {
           </Form.Group>
           <div className="d-flex justify-content-end">
             <Button variant="secondary" className="me-3" onClick={onHide}>Отменить</Button>
-            <Button variant="primary" type="submit">SСохранить</Button>
+            <Button variant="primary" type="submit">Сохранить</Button>
           </div>
         </Form>
       </Modal.Body>

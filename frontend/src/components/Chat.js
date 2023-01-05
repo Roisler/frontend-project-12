@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable react/prop-types */
 import React, { useEffect } from 'react';
 import io from 'socket.io-client';
@@ -39,10 +40,9 @@ const Chat = ({ user, activeChannel }) => {
         id: uniqueId('message_'),
       };
       socket.emit('newMessage', message, (data) => {
-        console.log(data.status);
+        console.log(data);
       });
       formik.resetForm();
-      console.log(formik);
     },
     validationSchema: yup.object({
       body: yup.string().required('Введите сообщение!'),

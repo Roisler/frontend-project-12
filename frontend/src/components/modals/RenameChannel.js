@@ -18,7 +18,6 @@ const RenameChannelModal = ({ show, onHide, setChannel }) => {
     onSubmit: (values) => {
       socket.emit('renameChannel', values, (response) => {
         const newChannel = response.data;
-        console.log(newChannel);
         setChannel(newChannel);
         onHide();
       });
