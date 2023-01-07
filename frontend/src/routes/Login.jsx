@@ -63,6 +63,7 @@ const Login = () => {
           onChange={formik.handleChange}
           isInvalid={authFailed}
         />
+        {formik.isValid ? null : <div>{formik.errors.username}</div>}
         <Form.Label htmlFor="username">Ваш ник</Form.Label>
       </Form.Group>
       <Form.Group className="form-floating mb-4">
@@ -75,6 +76,7 @@ const Login = () => {
           value={formik.values.password}
           isInvalid={authFailed}
         />
+        {formik.isValid ? null : <div>{formik.errors.password}</div>}
         <Form.Label htmlFor="password">Пароль</Form.Label>
         <Form.Control.Feedback type="invalid">Неверные имя пользователя или пароль</Form.Control.Feedback>
       </Form.Group>

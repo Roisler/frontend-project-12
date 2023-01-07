@@ -9,6 +9,7 @@ export const channelsSlice = createSlice({
   reducers: {
     addChannel: channelsAdapter.addOne,
     addChannels: channelsAdapter.addMany,
+    removeChannel: channelsAdapter.removeOne,
     updateChannel: channelsAdapter.updateOne,
   },
 });

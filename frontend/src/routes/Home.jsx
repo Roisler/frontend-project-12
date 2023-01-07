@@ -16,15 +16,27 @@ import { io } from 'socket.io-client';
 import { actions as channelsActions } from '../slices/channelsSlice';
 import { actions as messagesActions } from '../slices/messagesSlice';
 import Chat from '../components/Chat';
-import AddChannelModal from '../components/modals/AddChannel';
-import RenameChannelModal from '../components/modals/RenameChannel';
+import getModal from '../components/modals/index';
 import Channels from '../components/Channels';
 
 const socket = io();
 
+const renderModal = ({ modalInfo, hideModal, setChannel }) => {
+  if (!modalInfo.type) {
+    console.log(modalInfo);
+    return null;
+  }
+
+  const Component = getModal(modalInfo.type);
+  return <Component modalInfo={modalInfo} setChannel={setChannel} onHide={hideModal} />;
+};
+
 const Home = () => {
   const [activeChannel, setActiveChannel] = useState({});
-  const [activeModal, setActiveModal] = useState();
+  const [modalInfo, setModalInfo] = useState({ type: null, channel: null, activeChannel });
+  const hideModal = () => setModalInfo({ type: null, channel: null });
+  const showModal = (type, channel = null) => () => setModalInfo({ type, channel });
+
   const dispatch = useDispatch();
 
   const user = JSON.parse(localStorage.getItem('user'));
@@ -51,10 +63,17 @@ const Home = () => {
     });
     socket.on('newChannel', (payload) => {
       dispatch(channelsActions.addChannel(payload));
+      hideModal();
+    });
+    socket.on('removeChannel', (payload) => {
+      dispatch(channelsActions.removeChannel(payload.id));
+      hideModal();
+    });
+    socket.on('renameChannel', ({ id, name }) => {
+      dispatch(channelsActions.updateChannel({ id, changes: { name } }));
+      hideModal();
     });
   }, []);
-
-  const handleShow = (modal) => () => setActiveModal(modal);
 
   const getVariant = (channelName) => {
     if (activeChannel.name === channelName) {
@@ -70,7 +89,7 @@ const Home = () => {
           <Channels
             activeChannel={activeChannel}
             setActiveChannel={setActiveChannel}
-            handleShow={handleShow}
+            handleShow={showModal}
             getVariant={getVariant}
           />
         </Col>
@@ -78,15 +97,7 @@ const Home = () => {
           <Chat user={user} activeChannel={activeChannel} />
         </Col>
       </Row>
-      <AddChannelModal
-        show={activeModal === 'add'}
-        onHide={() => setActiveModal('')}
-        setChannel={setActiveChannel}
-      />
-      <RenameChannelModal
-        show={activeModal === 'rename'}
-        onHide={() => setActiveModal('')}
-      />
+      {renderModal({ modalInfo, hideModal, setChannel: setActiveChannel })}
     </Container>
   );
 };

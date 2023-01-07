@@ -15,7 +15,7 @@ const Channels = ({ setActiveChannel, handleShow, getVariant }) => {
     <>
       <div className="d-flex justify-content-between mb-2 ps-4 pe-2">
         <span>Каналы</span>
-        <Button variant="group-vertical" className="p-0 text-primary" onClick={handleShow('add')}>+</Button>
+        <Button variant="group-vertical" className="p-0 text-primary" onClick={handleShow('adding')}>+</Button>
       </div>
       <Nav fill as="ul" variant="pills" className="flex-column px-2">
         {channels.map((channel) => {
@@ -36,8 +36,8 @@ const Channels = ({ setActiveChannel, handleShow, getVariant }) => {
                     </Button>
                     <Dropdown.Toggle split variant={getVariant(name)} className="rounded-0" />
                     <Dropdown.Menu>
-                      <Dropdown.Item>Удалить</Dropdown.Item>
-                      <Dropdown.Item onClick={handleShow('rename')}>Переименовать</Dropdown.Item>
+                      <Dropdown.Item onClick={handleShow('removing', channel)}>Удалить</Dropdown.Item>
+                      <Dropdown.Item onClick={handleShow('renaming', channel)}>Переименовать</Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>
                 )

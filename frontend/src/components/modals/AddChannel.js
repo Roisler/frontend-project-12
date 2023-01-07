@@ -7,10 +7,14 @@ import {
   Form,
 } from 'react-bootstrap';
 import io from 'socket.io-client';
+import { useSelector } from 'react-redux';
+import * as yup from 'yup';
+import { selectors } from '../../slices/channelsSlice';
 
 const socket = io();
 
-const AddChannelModal = ({ show, onHide, setChannel }) => {
+const AddChannelModal = ({ onHide, setChannel }) => {
+  const channelsNames = useSelector(selectors.selectAll).map((channel) => channel.name);
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -22,14 +26,13 @@ const AddChannelModal = ({ show, onHide, setChannel }) => {
         onHide();
       });
     },
+    validationSchema: yup.object({
+      name: yup.string().notOneOf([channelsNames], 'Такой канал уже существует!'),
+    }),
   });
   return (
-    <Modal
-      show={show}
-      onHide={onHide}
-      centered
-    >
-      <Modal.Header closeButton>
+    <Modal show centered>
+      <Modal.Header closeButton onHide={onHide}>
         <Modal.Title>Добавить канал</Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -43,11 +46,12 @@ const AddChannelModal = ({ show, onHide, setChannel }) => {
               required
               autoFocus
             />
+            {!formik.isValid && <div>{formik.errors.name}</div>}
             <Form.Label htmlFor="name" className="visually-hidden">Название канала</Form.Label>
           </Form.Group>
           <div className="d-flex justify-content-end">
             <Button variant="secondary" className="me-3" onClick={onHide}>Отменить</Button>
-            <Button variant="primary" type="submit">Сохранить</Button>
+            <Button variant="primary" type="submit" disabled={!formik.isValid}>Сохранить</Button>
           </div>
         </Form>
       </Modal.Body>
