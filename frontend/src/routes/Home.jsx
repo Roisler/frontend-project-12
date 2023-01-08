@@ -21,24 +21,33 @@ import Channels from '../components/Channels';
 
 const socket = io();
 
-const renderModal = ({ modalInfo, hideModal, setChannel }) => {
+const renderModal = (props) => {
+  const {
+    modalInfo, hideModal, setChannel, activeChannel,
+  } = props;
   if (!modalInfo.type) {
     console.log(modalInfo);
     return null;
   }
 
   const Component = getModal(modalInfo.type);
-  return <Component modalInfo={modalInfo} setChannel={setChannel} onHide={hideModal} />;
+  return (
+    <Component
+      modalInfo={modalInfo}
+      setChannel={setChannel}
+      onHide={hideModal}
+      activeChannel={activeChannel}
+    />
+  );
 };
 
 const Home = () => {
   const [activeChannel, setActiveChannel] = useState({});
-  const [modalInfo, setModalInfo] = useState({ type: null, channel: null, activeChannel });
+  const [modalInfo, setModalInfo] = useState({ type: null, channel: null });
   const hideModal = () => setModalInfo({ type: null, channel: null });
   const showModal = (type, channel = null) => () => setModalInfo({ type, channel });
 
   const dispatch = useDispatch();
-
   const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
@@ -48,7 +57,6 @@ const Home = () => {
         { headers: { Authorization: `Bearer ${user.token}` } },
       );
       const { channels, messages, currentChannelId } = response.data;
-      console.log(response.data);
       dispatch(channelsActions.addChannels(channels));
       dispatch(messagesActions.addMessages(messages));
       const currentChannel = channels.find(({ id }) => id === currentChannelId);
@@ -58,29 +66,29 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    socket.on('newMessage', (payload) => {
-      dispatch(messagesActions.addMessage(payload));
+    socket.on('connect_error', () => {
+      setTimeout(() => {
+        socket.connect();
+      }, 1000);
     });
-    socket.on('newChannel', (payload) => {
-      dispatch(channelsActions.addChannel(payload));
+    socket.on('newMessage', (message) => {
+      dispatch(messagesActions.addMessage(message));
+    });
+    socket.on('newChannel', (channel) => {
+      dispatch(channelsActions.addChannel(channel));
+    });
+    socket.on('removeChannel', (channel) => {
+      dispatch(channelsActions.removeChannel(channel.id));
       hideModal();
     });
-    socket.on('removeChannel', (payload) => {
-      dispatch(channelsActions.removeChannel(payload.id));
-      hideModal();
-    });
-    socket.on('renameChannel', ({ id, name }) => {
+    socket.on('renameChannel', (channel) => {
+      const { id, name } = channel;
+      console.log(channel);
       dispatch(channelsActions.updateChannel({ id, changes: { name } }));
       hideModal();
+      setActiveChannel(channel);
     });
   }, []);
-
-  const getVariant = (channelName) => {
-    if (activeChannel.name === channelName) {
-      return 'secondary';
-    }
-    return 'light';
-  };
 
   return (
     <Container className="h-100 my-4 overflow-hidden rounded shadow">
@@ -90,14 +98,15 @@ const Home = () => {
             activeChannel={activeChannel}
             setActiveChannel={setActiveChannel}
             handleShow={showModal}
-            getVariant={getVariant}
           />
         </Col>
         <Col className="h-100 p-0">
           <Chat user={user} activeChannel={activeChannel} />
         </Col>
       </Row>
-      {renderModal({ modalInfo, hideModal, setChannel: setActiveChannel })}
+      {renderModal({
+        modalInfo, hideModal, setChannel: setActiveChannel, activeChannel,
+      })}
     </Container>
   );
 };

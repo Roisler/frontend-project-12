@@ -9,8 +9,14 @@ import {
 import { useSelector } from 'react-redux';
 import { selectors } from '../slices/channelsSlice';
 
-const Channels = ({ setActiveChannel, handleShow, getVariant }) => {
+const Channels = ({ activeChannel, setActiveChannel, handleShow }) => {
   const channels = useSelector(selectors.selectAll);
+  const getVariant = (channelName) => {
+    if (activeChannel.name === channelName) {
+      return 'secondary';
+    }
+    return 'light';
+  };
   return (
     <>
       <div className="d-flex justify-content-between mb-2 ps-4 pe-2">

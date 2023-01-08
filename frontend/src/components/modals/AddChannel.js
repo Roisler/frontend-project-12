@@ -23,8 +23,8 @@ const AddChannelModal = ({ onHide, setChannel }) => {
       socket.emit('newChannel', values, (response) => {
         const newChannel = response.data;
         setChannel(newChannel);
-        onHide();
       });
+      onHide();
     },
     validationSchema: yup.object({
       name: yup.string().notOneOf([channelsNames], 'Такой канал уже существует!'),

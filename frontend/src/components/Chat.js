@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 /* eslint-disable react/prop-types */
-import React, { useEffect } from 'react';
+import React from 'react';
 import io from 'socket.io-client';
 import { useFormik } from 'formik';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import * as yup from 'yup';
 import {
   Form,
@@ -11,23 +11,17 @@ import {
   Button,
 } from 'react-bootstrap';
 import { uniqueId } from 'lodash';
-import { selectors as messagesSelectors, actions as messagesActions } from '../slices/messagesSlice';
+import { selectors as messagesSelectors } from '../slices/messagesSlice';
 
 const socket = io();
 const Chat = ({ user, activeChannel }) => {
-  const dispatch = useDispatch();
   const messages = useSelector(messagesSelectors.selectAll);
   // const [currentMessage, setCurrentMessage] = useState();
-  useEffect(() => {
-    socket.on('newMessage', (payload) => {
+  /* useEffect(() => {
+    socket.emit('newMessage', (payload) => {
       dispatch(messagesActions.addMessage(payload));
     });
-  }, []);
-  /* useEffect(() => {
-    if (!currentMessage) return;
-    dispatch(messagesActions.addMessage(currentMessage));
-    setCurrentMessage();
-  }, [currentMessage]); */
+  }, []); */
   const formik = useFormik({
     initialValues: {
       body: '',
