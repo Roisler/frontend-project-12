@@ -27,7 +27,7 @@ const AddChannelModal = ({ onHide, setChannel }) => {
       onHide();
     },
     validationSchema: yup.object({
-      name: yup.string().notOneOf([channelsNames], 'Такой канал уже существует!'),
+      name: yup.string().min(3, 'Должно быть не менее 3 символов').notOneOf([channelsNames], 'Такой канал уже существует!'),
     }),
   });
   return (

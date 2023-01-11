@@ -35,7 +35,6 @@ const Login = () => {
         localStorage.setItem('user', JSON.stringify({ username, token }));
         auth.logIn();
       } catch (err) {
-        formik.setSubmitting(false);
         if (err.name === 'AxiosError' && err.response.status === 401) {
           setAuthFailed(true);
           return;
@@ -76,11 +75,12 @@ const Login = () => {
           value={formik.values.password}
           isInvalid={authFailed}
         />
-        {formik.isValid ? null : <div>{formik.errors.password}</div>}
+        {formik.touched.password && formik.isValid ? null : <div>{formik.errors.password}</div>}
         <Form.Label htmlFor="password">Пароль</Form.Label>
         <Form.Control.Feedback type="invalid">Неверные имя пользователя или пароль</Form.Control.Feedback>
       </Form.Group>
       <Button type="submit">Отправить</Button>
+      <Button href="/signup">Регистрация</Button>
     </Form>
   );
 };

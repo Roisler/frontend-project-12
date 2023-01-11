@@ -11,7 +11,7 @@ import {
 } from 'react-bootstrap';
 // import { useFormik } from 'formik';
 // import * as yup from 'yup';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { io } from 'socket.io-client';
 import { actions as channelsActions } from '../slices/channelsSlice';
 import { actions as messagesActions } from '../slices/messagesSlice';
@@ -26,7 +26,6 @@ const renderModal = (props) => {
     modalInfo, hideModal, setChannel, activeChannel,
   } = props;
   if (!modalInfo.type) {
-    console.log(modalInfo);
     return null;
   }
 
@@ -49,6 +48,17 @@ const Home = () => {
 
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem('user'));
+  const defaultChannel = useSelector((state) => state.channels.defaultChannel);
+  console.log(defaultChannel);
+  const changeChannel = (channel) => {
+    dispatch(channelsActions.setDefaultChannel(channel));
+  };
+  useEffect(() => {
+    console.log(defaultChannel);
+    if (defaultChannel) {
+      setActiveChannel(defaultChannel);
+    }
+  }, [defaultChannel]);
 
   useEffect(() => {
     const getContent = async () => {
@@ -57,10 +67,11 @@ const Home = () => {
         { headers: { Authorization: `Bearer ${user.token}` } },
       );
       const { channels, messages, currentChannelId } = response.data;
+      console.log(response);
       dispatch(channelsActions.addChannels(channels));
       dispatch(messagesActions.addMessages(messages));
       const currentChannel = channels.find(({ id }) => id === currentChannelId);
-      setActiveChannel(currentChannel);
+      dispatch(channelsActions.setDefaultChannel(currentChannel));
     };
     getContent();
   }, []);
@@ -83,10 +94,9 @@ const Home = () => {
     });
     socket.on('renameChannel', (channel) => {
       const { id, name } = channel;
-      console.log(channel);
       dispatch(channelsActions.updateChannel({ id, changes: { name } }));
       hideModal();
-      setActiveChannel(channel);
+      changeChannel(channel);
     });
   }, []);
 
@@ -96,7 +106,7 @@ const Home = () => {
         <Col md={2} className="col-4 col-md-2 border-end pt-5 px-0 bg-light">
           <Channels
             activeChannel={activeChannel}
-            setActiveChannel={setActiveChannel}
+            setActiveChannel={changeChannel}
             handleShow={showModal}
           />
         </Col>
@@ -105,7 +115,7 @@ const Home = () => {
         </Col>
       </Row>
       {renderModal({
-        modalInfo, hideModal, setChannel: setActiveChannel, activeChannel,
+        modalInfo, hideModal, setChannel: changeChannel, activeChannel,
       })}
     </Container>
   );

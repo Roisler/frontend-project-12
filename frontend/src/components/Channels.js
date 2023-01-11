@@ -7,10 +7,17 @@ import {
   NavItem,
 } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
-import { selectors } from '../slices/channelsSlice';
+import { selectors as channelsSelectors } from '../slices/channelsSlice';
 
 const Channels = ({ activeChannel, setActiveChannel, handleShow }) => {
-  const channels = useSelector(selectors.selectAll);
+  const channels = useSelector(channelsSelectors.selectAll);
+  /* const { username } = user;
+  const dispatch = useDispatch();
+  console.log(user);
+  const changeActiveChannellForUser = (channel) => {
+    dispatch(usersActions.updateUser({ username, changes: { currentChannel: channel } }));
+    setActiveChannel(channel);
+  }; */
   const getVariant = (channelName) => {
     if (activeChannel.name === channelName) {
       return 'secondary';

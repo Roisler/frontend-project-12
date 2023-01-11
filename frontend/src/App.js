@@ -8,14 +8,18 @@ import {
 } from 'react-router-dom';
 import Home from './routes/Home';
 import Login from './routes/Login';
+import SignUp from './routes/SignUp';
 import ErrorPage from './routes/ErrorPage';
 import './App.css';
 import { AuthProvider } from './AutorizationContext';
+import Container from './components/Container';
+import NavBar from './components/Navbar';
+import useAuth from './hooks/useAuth';
 
 const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem('user');
+  const auth = useAuth();
   const location = useLocation();
-  if (token) {
+  if (auth.isAuth) {
     return children;
   }
   return (
@@ -38,11 +42,18 @@ const App = () => {
       path: '/login',
       element: <Login />,
     },
+    {
+      path: '/signup',
+      element: <SignUp />,
+    },
   ]);
 
   return (
     <AuthProvider>
-      <RouterProvider router={router} />
+      <NavBar />
+      <Container>
+        <RouterProvider router={router} />
+      </Container>
     </AuthProvider>
   );
 };

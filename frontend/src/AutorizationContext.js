@@ -8,10 +8,18 @@ import React, {
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-  const [isAuth, setIsAuth] = useState(false);
+  const isLogin = () => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      return true;
+    }
+    return false;
+  };
+
+  const [isAuth, setIsAuth] = useState(isLogin());
   const logIn = () => setIsAuth(true);
-  const logOut = (user) => {
-    localStorage.removeItem(user);
+  const logOut = () => {
+    localStorage.removeItem('user');
     setIsAuth(false);
   };
   const value = useMemo(() => ({

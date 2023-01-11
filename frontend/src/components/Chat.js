@@ -16,12 +16,7 @@ import { selectors as messagesSelectors } from '../slices/messagesSlice';
 const socket = io();
 const Chat = ({ user, activeChannel }) => {
   const messages = useSelector(messagesSelectors.selectAll);
-  // const [currentMessage, setCurrentMessage] = useState();
-  /* useEffect(() => {
-    socket.emit('newMessage', (payload) => {
-      dispatch(messagesActions.addMessage(payload));
-    });
-  }, []); */
+
   const formik = useFormik({
     initialValues: {
       body: '',
@@ -79,6 +74,7 @@ const Chat = ({ user, activeChannel }) => {
               className="border-0 p-0 ps-2"
               onChange={formik.handleChange}
               value={formik.values.body}
+              autoFocus
               required
             />
             <Button

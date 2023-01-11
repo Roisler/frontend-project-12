@@ -10,14 +10,10 @@ const socket = io();
 
 const RemoveChannel = (props) => {
   const {
-    modalInfo, onHide, setChannel, activeChannel,
+    modalInfo, onHide,
   } = props;
   const handleRemove = () => {
-    socket.emit('removeChannel', modalInfo.channel, (data) => {
-      if (data.status === 'ok' && modalInfo.channel.name === activeChannel.name) {
-        setChannel({ name: 'general', id: 1, removable: false });
-      }
-    });
+    socket.emit('removeChannel', modalInfo.channel);
   };
   return (
     <Modal show centered>
