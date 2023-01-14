@@ -9,9 +9,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 import useAuth from '../hooks/useAuth';
 
 const Login = () => {
+  const { t } = useTranslation();
   const auth = useAuth();
   const [authFailed, setAuthFailed] = useState(false);
   const location = useLocation();
@@ -43,44 +45,42 @@ const Login = () => {
       }
     },
     validationSchema: yup.object({
-      username: yup.string().min(2, 'Должно быть не менее 2 символов').required('Обязательное поле'),
-      password: yup.string()
-        .min(3, 'Должен быть не менее 3 символов')
-        .required('Обязательное поле'),
+      username: yup.string().required(t('validation.required')),
+      password: yup.string().required(t('validation.required')),
     }),
   });
   return (
     <Form onSubmit={formik.handleSubmit} className="col-12 col-md-6 mt-3 mt-mb-0">
-      <h1 className="text-center mb4">Войти</h1>
+      <h1 className="text-center mb4">{t('basic.signin')}</h1>
       <Form.Group className="form-floating mb-3">
         <FormControl
           id="username"
           name="username"
           type="text"
           value={formik.values.username}
-          placeholder="Ваш ник"
+          placeholder={t('basic.nickname')}
           onChange={formik.handleChange}
           isInvalid={authFailed}
         />
         {formik.isValid ? null : <div>{formik.errors.username}</div>}
-        <Form.Label htmlFor="username">Ваш ник</Form.Label>
+        <Form.Label htmlFor="username">{t('basic.nickname')}</Form.Label>
       </Form.Group>
       <Form.Group className="form-floating mb-4">
         <FormControl
           id="password"
           name="password"
           type="password"
-          placeholder="Пароль"
+          placeholder={t('basic.password')}
           onChange={formik.handleChange}
           value={formik.values.password}
           isInvalid={authFailed}
         />
         {formik.touched.password && formik.isValid ? null : <div>{formik.errors.password}</div>}
-        <Form.Label htmlFor="password">Пароль</Form.Label>
-        <Form.Control.Feedback type="invalid">Неверные имя пользователя или пароль</Form.Control.Feedback>
+        <Form.Label htmlFor="password">{t('basic.password')}</Form.Label>
+        <Form.Control.Feedback type="invalid">{t('errors.invalid_auth')}</Form.Control.Feedback>
       </Form.Group>
-      <Button type="submit">Отправить</Button>
-      <Button href="/signup">Регистрация</Button>
+      <Button type="submit">{t('basic.send')}</Button>
+      <Button href="/signup">{t('basic.signup')}</Button>
     </Form>
   );
 };

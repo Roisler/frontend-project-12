@@ -11,10 +11,12 @@ import {
   Button,
 } from 'react-bootstrap';
 import { uniqueId } from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { selectors as messagesSelectors } from '../slices/messagesSlice';
 
 const socket = io();
 const Chat = ({ user, activeChannel }) => {
+  const { t } = useTranslation();
   const messages = useSelector(messagesSelectors.selectAll);
 
   const formik = useFormik({
@@ -34,7 +36,7 @@ const Chat = ({ user, activeChannel }) => {
       formik.resetForm();
     },
     validationSchema: yup.object({
-      body: yup.string().required('Введите сообщение!'),
+      body: yup.string().required(t('validation.required')),
     }),
   });
 
@@ -44,7 +46,7 @@ const Chat = ({ user, activeChannel }) => {
     <div className="d-flex flex-column h-100">
       <div className="bg-light mb-4 p-3 shadow-sm small">
         <p className="m-0"><b>{`# ${activeChannel.name}`}</b></p>
-        <span className="text-muted">{`${getTotalMessages(activeChannel.id)} сообщений`}</span>
+        <span className="text-muted">{t('messages.messageWithCount', { count: getTotalMessages(activeChannel.id) })}</span>
       </div>
       <div id="messages-box" className="chat-messages overflow-auto px-5 ">
         {messages
@@ -83,7 +85,7 @@ const Chat = ({ user, activeChannel }) => {
               id="button-text"
               disabled={formik.values.body === ''}
             >
-              Send
+              {t('basic.send')}
             </Button>
           </InputGroup>
         </Form>

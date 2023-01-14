@@ -9,11 +9,13 @@ import {
 import io from 'socket.io-client';
 import { useSelector } from 'react-redux';
 import * as yup from 'yup';
+import { useTranslation } from 'react-i18next';
 import { selectors } from '../../slices/channelsSlice';
 
 const socket = io();
 
 const RenameChannel = ({ modalInfo, onHide }) => {
+  const { t } = useTranslation();
   const channelsNames = useSelector(selectors.selectAll).map((channel) => channel.name);
   const formik = useFormik({
     initialValues: modalInfo.channel,
@@ -21,7 +23,7 @@ const RenameChannel = ({ modalInfo, onHide }) => {
       socket.emit('renameChannel', values);
     },
     validationSchema: yup.object({
-      name: yup.string().notOneOf([channelsNames], 'Такой канал уже существует!'),
+      name: yup.string().notOneOf([channelsNames], t('validation.channel_exist')),
     }),
   });
   const inputRef = useRef();
@@ -31,7 +33,7 @@ const RenameChannel = ({ modalInfo, onHide }) => {
   return (
     <Modal show centered>
       <Modal.Header closeButton onHide={onHide}>
-        <Modal.Title>Переименовать канал</Modal.Title>
+        <Modal.Title>{t('channels.rename')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>
@@ -46,11 +48,11 @@ const RenameChannel = ({ modalInfo, onHide }) => {
               autoFocus
             />
             {!formik.isValid && <div>{formik.errors.name}</div>}
-            <Form.Label htmlFor="name" className="visually-hidden">Новое название канала</Form.Label>
+            <Form.Label htmlFor="name" className="visually-hidden">{t('channels.name')}</Form.Label>
           </Form.Group>
           <div className="d-flex justify-content-end">
-            <Button variant="secondary" className="me-3" onClick={onHide}>Отменить</Button>
-            <Button variant="primary" type="submit" disabled={!formik.isValid}>Сохранить</Button>
+            <Button variant="secondary" className="me-3" onClick={onHide}>{t('basic.cancel')}</Button>
+            <Button variant="primary" type="submit" disabled={!formik.isValid}>{t('basic.send')}</Button>
           </div>
         </Form>
       </Modal.Body>

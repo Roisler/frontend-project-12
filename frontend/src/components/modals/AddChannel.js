@@ -9,11 +9,13 @@ import {
 import io from 'socket.io-client';
 import { useSelector } from 'react-redux';
 import * as yup from 'yup';
+import { useTranslation } from 'react-i18next';
 import { selectors } from '../../slices/channelsSlice';
 
 const socket = io();
 
 const AddChannelModal = ({ onHide, setChannel }) => {
+  const { t } = useTranslation();
   const channelsNames = useSelector(selectors.selectAll).map((channel) => channel.name);
   const formik = useFormik({
     initialValues: {
@@ -27,13 +29,13 @@ const AddChannelModal = ({ onHide, setChannel }) => {
       onHide();
     },
     validationSchema: yup.object({
-      name: yup.string().min(3, 'Должно быть не менее 3 символов').notOneOf([channelsNames], 'Такой канал уже существует!'),
+      name: yup.string().min(3, t('validation.name')).notOneOf([channelsNames], t('validation.channel_exist')),
     }),
   });
   return (
     <Modal show centered>
       <Modal.Header closeButton onHide={onHide}>
-        <Modal.Title>Добавить канал</Modal.Title>
+        <Modal.Title>{t('channels.add')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>
@@ -47,11 +49,11 @@ const AddChannelModal = ({ onHide, setChannel }) => {
               autoFocus
             />
             {!formik.isValid && <div>{formik.errors.name}</div>}
-            <Form.Label htmlFor="name" className="visually-hidden">Название канала</Form.Label>
+            <Form.Label htmlFor="name" className="visually-hidden">{t('channels.name')}</Form.Label>
           </Form.Group>
           <div className="d-flex justify-content-end">
-            <Button variant="secondary" className="me-3" onClick={onHide}>Отменить</Button>
-            <Button variant="primary" type="submit" disabled={!formik.isValid}>Сохранить</Button>
+            <Button variant="secondary" className="me-3" onClick={onHide}>{t('basic.cancel')}</Button>
+            <Button variant="primary" type="submit" disabled={!formik.isValid}>{t('basic.send')}</Button>
           </div>
         </Form>
       </Modal.Body>

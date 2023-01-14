@@ -7,17 +7,12 @@ import {
   NavItem,
 } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { selectors as channelsSelectors } from '../slices/channelsSlice';
 
 const Channels = ({ activeChannel, setActiveChannel, handleShow }) => {
+  const { t } = useTranslation();
   const channels = useSelector(channelsSelectors.selectAll);
-  /* const { username } = user;
-  const dispatch = useDispatch();
-  console.log(user);
-  const changeActiveChannellForUser = (channel) => {
-    dispatch(usersActions.updateUser({ username, changes: { currentChannel: channel } }));
-    setActiveChannel(channel);
-  }; */
   const getVariant = (channelName) => {
     if (activeChannel.name === channelName) {
       return 'secondary';
@@ -49,8 +44,8 @@ const Channels = ({ activeChannel, setActiveChannel, handleShow }) => {
                     </Button>
                     <Dropdown.Toggle split variant={getVariant(name)} className="rounded-0" />
                     <Dropdown.Menu>
-                      <Dropdown.Item onClick={handleShow('removing', channel)}>Удалить</Dropdown.Item>
-                      <Dropdown.Item onClick={handleShow('renaming', channel)}>Переименовать</Dropdown.Item>
+                      <Dropdown.Item onClick={handleShow('removing', channel)}>{t('channels.remove')}</Dropdown.Item>
+                      <Dropdown.Item onClick={handleShow('renaming', channel)}>{t('channels.rename')}</Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>
                 )
