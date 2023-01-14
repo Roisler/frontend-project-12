@@ -12,12 +12,15 @@ import {
 // import { useFormik } from 'formik';
 // import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import { io } from 'socket.io-client';
+import { useTranslation } from 'react-i18next';
 import { actions as channelsActions } from '../slices/channelsSlice';
 import { actions as messagesActions } from '../slices/messagesSlice';
 import Chat from '../components/Chat';
 import getModal from '../components/modals/index';
 import Channels from '../components/Channels';
+import routes from '../routes';
 
 const socket = io();
 
@@ -41,6 +44,7 @@ const renderModal = (props) => {
 };
 
 const Home = () => {
+  const { t } = useTranslation();
   const [activeChannel, setActiveChannel] = useState({});
   const [modalInfo, setModalInfo] = useState({ type: null, channel: null });
   const hideModal = () => setModalInfo({ type: null, channel: null });
@@ -63,11 +67,10 @@ const Home = () => {
   useEffect(() => {
     const getContent = async () => {
       const response = await axios.get(
-        '/api/v1/data',
+        routes.dataPath(),
         { headers: { Authorization: `Bearer ${user.token}` } },
       );
       const { channels, messages, currentChannelId } = response.data;
-      console.log(response);
       dispatch(channelsActions.addChannels(channels));
       dispatch(messagesActions.addMessages(messages));
       const currentChannel = channels.find(({ id }) => id === currentChannelId);
@@ -81,22 +84,26 @@ const Home = () => {
       setTimeout(() => {
         socket.connect();
       }, 1000);
+      toast.warn(t('errors.connect'));
     });
     socket.on('newMessage', (message) => {
       dispatch(messagesActions.addMessage(message));
     });
     socket.on('newChannel', (channel) => {
       dispatch(channelsActions.addChannel(channel));
+      toast.success(t('channels.channel_created'));
     });
     socket.on('removeChannel', (channel) => {
       dispatch(channelsActions.removeChannel(channel.id));
       hideModal();
+      toast.success(t('channels.channel_removed'));
     });
     socket.on('renameChannel', (channel) => {
       const { id, name } = channel;
       dispatch(channelsActions.updateChannel({ id, changes: { name } }));
       hideModal();
       changeChannel(channel);
+      toast.success(t('channels.channel_renamed'));
     });
   }, []);
 

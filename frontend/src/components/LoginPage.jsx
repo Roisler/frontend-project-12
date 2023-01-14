@@ -7,7 +7,6 @@ import {
 } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
-import * as yup from 'yup';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import useAuth from '../hooks/useAuth';
@@ -44,10 +43,6 @@ const Login = () => {
         throw err;
       }
     },
-    validationSchema: yup.object({
-      username: yup.string().required(t('validation.required')),
-      password: yup.string().required(t('validation.required')),
-    }),
   });
   return (
     <Form onSubmit={formik.handleSubmit} className="col-12 col-md-6 mt-3 mt-mb-0">
@@ -62,7 +57,6 @@ const Login = () => {
           onChange={formik.handleChange}
           isInvalid={authFailed}
         />
-        {formik.isValid ? null : <div>{formik.errors.username}</div>}
         <Form.Label htmlFor="username">{t('basic.nickname')}</Form.Label>
       </Form.Group>
       <Form.Group className="form-floating mb-4">
@@ -75,7 +69,6 @@ const Login = () => {
           value={formik.values.password}
           isInvalid={authFailed}
         />
-        {formik.touched.password && formik.isValid ? null : <div>{formik.errors.password}</div>}
         <Form.Label htmlFor="password">{t('basic.password')}</Form.Label>
         <Form.Control.Feedback type="invalid">{t('errors.invalid_auth')}</Form.Control.Feedback>
       </Form.Group>

@@ -6,10 +6,11 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useAuth from '../hooks/useAuth';
+import routes from '../routes';
 
 const Registration = () => {
   const auth = useAuth();
-  const t = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [regFailed, setRegFailed] = useState(false);
   const formik = useFormik({
@@ -20,7 +21,7 @@ const Registration = () => {
     },
     onSubmit: async (values) => {
       try {
-        const response = await axios.post('/api/v1/signup', values);
+        const response = await axios.post(routes.signupPath(), values);
         const { username, token } = response.data;
         localStorage.setItem('user', JSON.stringify({ username, token }));
         auth.logIn();
@@ -34,9 +35,16 @@ const Registration = () => {
       }
     },
     validationSchema: yup.object({
-      username: yup.string().min(3, t('validation.name')).required(t('validation.required')),
-      password: yup.string().min(6, t('validation.password_length')).required(t('validation.required')),
-      confirmPassword: yup.string().oneOf([yup.ref('password')], t('validation.confirm_password')).required(t('validation.required')),
+      username: yup.string()
+        .min(3, t('validation.name'))
+        .max(20, t('validation.name'))
+        .required(t('validation.required')),
+      password: yup.string()
+        .min(6, t('validation.password_length'))
+        .required(t('validation.required')),
+      confirmPassword: yup.string()
+        .oneOf([yup.ref('password')], t('validation.confirm_password'))
+        .required(t('validation.required')),
     }),
   });
   const { touched, errors } = formik;

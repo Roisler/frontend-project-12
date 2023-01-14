@@ -6,15 +6,16 @@ import {
   Navigate,
   useLocation,
 } from 'react-router-dom';
-import Home from './routes/Home';
-import Login from './routes/Login';
-import SignUp from './routes/SignUp';
-import ErrorPage from './routes/ErrorPage';
-import './App.css';
-import { AuthProvider } from './AutorizationContext';
-import Container from './components/Container';
-import NavBar from './components/Navbar';
-import useAuth from './hooks/useAuth';
+import { ToastContainer } from 'react-toastify';
+import Home from '../routes/Home';
+import LoginPage from './LoginPage';
+import SignUp from '../routes/SignUp';
+import ErrorPage from './ErrorPage';
+import '../App.css';
+import { AuthProvider } from '../contexts/AutorizationContext';
+import Container from './Container';
+import NavBar from './Navbar';
+import useAuth from '../hooks/useAuth';
 
 const PrivateRoute = ({ children }) => {
   const auth = useAuth();
@@ -40,7 +41,7 @@ const App = () => {
     },
     {
       path: '/login',
-      element: <Login />,
+      element: <LoginPage />,
     },
     {
       path: '/signup',
@@ -54,6 +55,18 @@ const App = () => {
       <Container>
         <RouterProvider router={router} />
       </Container>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </AuthProvider>
   );
 };

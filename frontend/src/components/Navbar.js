@@ -10,7 +10,7 @@ const NavBar = () => {
     <Container>
       <Navbar expand="lg" variant="light" bg="light">
         <Container>
-          <Navbar.Brand href="#">Hexlet Chat</Navbar.Brand>
+          <Navbar.Brand href="/">Hexlet Chat</Navbar.Brand>
           {auth.isAuth && <Button variant="primary" onClick={() => auth.logOut()}>{t('basic.logout')}</Button>}
         </Container>
       </Navbar>

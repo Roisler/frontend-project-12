@@ -2,7 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import i18n from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
-import App from './App';
+import App from './components/App';
 import store from './slices/index';
 import resources from './locales/index';
 
