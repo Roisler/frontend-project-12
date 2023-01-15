@@ -12,6 +12,7 @@ import {
 } from 'react-bootstrap';
 import { uniqueId } from 'lodash';
 import { useTranslation } from 'react-i18next';
+import leoProfanity from 'leo-profanity';
 import { selectors as messagesSelectors } from '../slices/messagesSlice';
 
 const socket = io();
@@ -25,7 +26,7 @@ const Chat = ({ user, activeChannel }) => {
     },
     onSubmit: (values) => {
       const message = {
-        ...values,
+        body: leoProfanity.clean(values.body),
         username: user.username,
         channelId: activeChannel.id,
         id: uniqueId('message_'),
