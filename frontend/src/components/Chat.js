@@ -1,6 +1,5 @@
-/* eslint-disable no-console */
 /* eslint-disable react/prop-types */
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 import { useFormik } from 'formik';
 import { useSelector } from 'react-redux';
@@ -32,7 +31,9 @@ const Chat = ({ user, activeChannel }) => {
         id: uniqueId('message_'),
       };
       socket.emit('newMessage', message, (data) => {
-        console.log(data);
+        if (data.status !== 'ok') {
+          throw new Error('Network error');
+        }
       });
       formik.resetForm();
     },
@@ -40,6 +41,13 @@ const Chat = ({ user, activeChannel }) => {
       body: yup.string().required(t('validation.required')),
     }),
   });
+
+  const messagesEndRef = useRef(null);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: 'smooth',
+    });
+  }, [messages]);
 
   const getTotalMessages = (id) => messages.filter((message) => message.channelId === id).length;
 
@@ -64,6 +72,7 @@ const Chat = ({ user, activeChannel }) => {
               </div>
             );
           })}
+        <span ref={messagesEndRef} />
       </div>
       <div className="mt-auto px-5 py-3">
         <Form onSubmit={formik.handleSubmit} className="py-1 border rounded-2">

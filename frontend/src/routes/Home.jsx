@@ -6,11 +6,7 @@ import {
   Container,
   Row,
   Col,
-  // Form,
-  // InputGroup,
 } from 'react-bootstrap';
-// import { useFormik } from 'formik';
-// import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { io } from 'socket.io-client';
@@ -47,18 +43,20 @@ const Home = () => {
   const { t } = useTranslation();
   const [activeChannel, setActiveChannel] = useState({});
   const [modalInfo, setModalInfo] = useState({ type: null, channel: null });
+
   const hideModal = () => setModalInfo({ type: null, channel: null });
   const showModal = (type, channel = null) => () => setModalInfo({ type, channel });
 
   const dispatch = useDispatch();
+
   const user = JSON.parse(localStorage.getItem('user'));
   const defaultChannel = useSelector((state) => state.channels.defaultChannel);
-  console.log(defaultChannel);
+
   const changeChannel = (channel) => {
     dispatch(channelsActions.setDefaultChannel(channel));
   };
+
   useEffect(() => {
-    console.log(defaultChannel);
     if (defaultChannel) {
       setActiveChannel(defaultChannel);
     }

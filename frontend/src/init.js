@@ -20,11 +20,7 @@ const init = async () => {
 
   const rollbarConfig = {
     accessToken: 'da4bf007cb5041c6b3ca04c533ff7d42',
-    environment: 'testenv',
-  };
-  const TestError = () => {
-    const a = null;
-    return a.hello();
+    environment: 'production',
   };
 
   leoProfanity.clearList();
@@ -33,7 +29,6 @@ const init = async () => {
   const vdom = (
     <RollbarProvider config={rollbarConfig}>
       <ErrorBoundary>
-        <TestError />
         <Provider store={store}>
           <I18nextProvider i18n={i18nInstance}>
             <App />
