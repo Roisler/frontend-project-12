@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable consistent-return */
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
@@ -13,10 +11,11 @@ import { io } from 'socket.io-client';
 import { useTranslation } from 'react-i18next';
 import { actions as channelsActions } from '../slices/channelsSlice';
 import { actions as messagesActions } from '../slices/messagesSlice';
-import Chat from '../components/Chat';
-import getModal from '../components/modals/index';
-import Channels from '../components/Channels';
+import Chat from './Chat';
+import getModal from './modals/index';
+import Channels from './Channels';
 import routes from '../routes';
+import NavBar from './Navbar';
 
 const socket = io();
 
@@ -106,23 +105,26 @@ const Home = () => {
   }, []);
 
   return (
-    <Container className="h-100 my-4 overflow-hidden rounded shadow">
-      <Row className="h-100 bg-white flex-md-row">
-        <Col md={2} className="col-4 col-md-2 border-end pt-5 px-0 bg-light">
-          <Channels
-            activeChannel={activeChannel}
-            setActiveChannel={changeChannel}
-            handleShow={showModal}
-          />
-        </Col>
-        <Col className="h-100 p-0">
-          <Chat user={user} activeChannel={activeChannel} />
-        </Col>
-      </Row>
-      {renderModal({
-        modalInfo, hideModal, setChannel: changeChannel, activeChannel,
-      })}
-    </Container>
+    <>
+      <NavBar />
+      <Container className="h-100 my-4 overflow-hidden rounded shadow">
+        <Row className="h-100 bg-white flex-md-row">
+          <Col md={2} className="col-4 border-end pt-5 px-0 bg-light">
+            <Channels
+              activeChannel={activeChannel}
+              setActiveChannel={changeChannel}
+              handleShow={showModal}
+            />
+          </Col>
+          <Col className="h-100 p-0">
+            <Chat user={user} activeChannel={activeChannel} />
+          </Col>
+        </Row>
+        {renderModal({
+          modalInfo, hideModal, setChannel: changeChannel, activeChannel,
+        })}
+      </Container>
+    </>
   );
 };
 

@@ -23,7 +23,7 @@ const Channels = ({ activeChannel, setActiveChannel, handleShow }) => {
     <>
       <div className="d-flex justify-content-between mb-2 ps-4 pe-2">
         <span>Каналы</span>
-        <Button variant="group-vertical" className="p-0 text-primary" onClick={handleShow('adding')}>+</Button>
+        <Button variant="success" className="btn-sm" onClick={handleShow('adding')}>+</Button>
       </div>
       <Nav fill as="ul" variant="pills" className="flex-column px-2">
         {channels.map((channel) => {
@@ -37,7 +37,7 @@ const Channels = ({ activeChannel, setActiveChannel, handleShow }) => {
                     <Button
                       variant={getVariant(name)}
                       onClick={() => setActiveChannel(channel)}
-                      className="w-100 rounded-0 text-start"
+                      className="w-100 rounded-0 text-start text-truncate"
                     >
                       <span className="me-1">#</span>
                       {name}

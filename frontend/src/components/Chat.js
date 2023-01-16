@@ -76,7 +76,7 @@ const Chat = ({ user, activeChannel }) => {
       </div>
       <div className="mt-auto px-5 py-3">
         <Form onSubmit={formik.handleSubmit} className="py-1 border rounded-2">
-          <InputGroup has-validation="true">
+          <InputGroup>
             <Form.Control
               id="body"
               name="body"

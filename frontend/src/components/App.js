@@ -7,14 +7,11 @@ import {
   useLocation,
 } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import Home from '../routes/Home';
+import Home from './Home';
 import LoginPage from './LoginPage';
-import SignUp from '../routes/SignUp';
+import Registration from './Registration';
 import ErrorPage from './ErrorPage';
-import '../App.css';
 import { AuthProvider } from '../contexts/AutorizationContext';
-import Container from './Container';
-import NavBar from './Navbar';
 import useAuth from '../hooks/useAuth';
 
 const PrivateRoute = ({ children }) => {
@@ -45,16 +42,15 @@ const App = () => {
     },
     {
       path: '/signup',
-      element: <SignUp />,
+      element: <Registration />,
     },
   ]);
 
   return (
     <AuthProvider>
-      <NavBar />
-      <Container>
+      <div className="d-flex flex-column h-100">
         <RouterProvider router={router} />
-      </Container>
+      </div>
       <ToastContainer
         position="top-right"
         autoClose={3000}

@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import {
+  Form,
+  Button,
+  Card,
+  Image,
+  Container,
+  Col,
+  Row,
+} from 'react-bootstrap';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useAuth from '../hooks/useAuth';
 import routes from '../routes';
+import NavBar from './Navbar';
 
 const Registration = () => {
   const auth = useAuth();
@@ -49,53 +58,75 @@ const Registration = () => {
   });
   const { touched, errors } = formik;
   return (
-    <Form onSubmit={formik.handleSubmit} className="col-12 col-md-6 mt-3 mt-mb-0">
-      <h1 className="text-center mb4">{t('basic.registration')}</h1>
-      <Form.Group className="form-floating mb-3">
-        <Form.Control
-          id="username"
-          name="username"
-          type="text"
-          value={formik.values.username}
-          placeholder={t('basic.nickname')}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          isInvalid={touched.username && !!errors.username}
-        />
-        <Form.Label htmlFor="username">{t('basic.nickname')}</Form.Label>
-        <Form.Control.Feedback type="invalid" tooltip>{errors.username}</Form.Control.Feedback>
-      </Form.Group>
-      <Form.Group className="form-floating mb-4">
-        <Form.Control
-          id="password"
-          name="password"
-          type="password"
-          placeholder={t('basic.password')}
-          onChange={formik.handleChange}
-          value={formik.values.password}
-          onBlur={formik.handleBlur}
-          isInvalid={touched.password && !!errors.password}
-        />
-        <Form.Label htmlFor="password">{t('basic.password')}</Form.Label>
-        <Form.Control.Feedback type="invalid" tooltip>{errors.password}</Form.Control.Feedback>
-      </Form.Group>
-      <Form.Group className="form-floating mb-4">
-        <Form.Control
-          id="confirmPassword"
-          name="confirmPassword"
-          type="password"
-          placeholder={t('basic.confirm_password')}
-          onChange={formik.handleChange}
-          value={formik.values.confirmPassword}
-          onBlur={formik.handleBlur}
-          isInvalid={(touched.confirmPassword && !!errors.confirmPassword) || regFailed}
-        />
-        <Form.Label htmlFor="confirmPassword">{t('basic.confirm_password')}</Form.Label>
-        <Form.Control.Feedback type="invalid" tooltip>{errors.confirmPassword}</Form.Control.Feedback>
-        {regFailed && <Form.Control.Feedback type="invalid" tooltip>{t('errors.user_exist')}</Form.Control.Feedback>}
-      </Form.Group>
-      <Button type="submit">{t('basic.send')}</Button>
-    </Form>
+    <>
+      <NavBar />
+      <Container fluid>
+        <Row>
+          <Col>
+            <Card className="shadow">
+              <Card.Body className="row p-5">
+                <Col className="d-flex align-items-center justify-content-center">
+                  <Image roundedCircle src="loginImage.jpeg" alt="Войти" />
+                </Col>
+                <Form onSubmit={formik.handleSubmit} className="col-12 col-md-6 mt-3 mt-mb-0">
+                  <h1 className="text-center mb-4">{t('basic.registration')}</h1>
+                  <Form.Group className="form-floating mb-3">
+                    <Form.Control
+                      id="username"
+                      name="username"
+                      type="text"
+                      value={formik.values.username}
+                      placeholder={t('basic.nickname')}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      isInvalid={touched.username && !!errors.username}
+                    />
+                    <Form.Label htmlFor="username">{t('basic.nickname')}</Form.Label>
+                    <Form.Control.Feedback type="invalid" tooltip>{errors.username}</Form.Control.Feedback>
+                  </Form.Group>
+                  <Form.Group className="form-floating mb-4">
+                    <Form.Control
+                      id="password"
+                      name="password"
+                      type="password"
+                      placeholder={t('basic.password')}
+                      onChange={formik.handleChange}
+                      value={formik.values.password}
+                      onBlur={formik.handleBlur}
+                      isInvalid={touched.password && !!errors.password}
+                    />
+                    <Form.Label htmlFor="password">{t('basic.password')}</Form.Label>
+                    <Form.Control.Feedback type="invalid" tooltip>{errors.password}</Form.Control.Feedback>
+                  </Form.Group>
+                  <Form.Group className="form-floating mb-4">
+                    <Form.Control
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type="password"
+                      placeholder={t('basic.confirm_password')}
+                      onChange={formik.handleChange}
+                      value={formik.values.confirmPassword}
+                      onBlur={formik.handleBlur}
+                      isInvalid={(touched.confirmPassword && !!errors.confirmPassword) || regFailed}
+                    />
+                    <Form.Label htmlFor="confirmPassword">{t('basic.confirm_password')}</Form.Label>
+                    <Form.Control.Feedback type="invalid" tooltip>{errors.confirmPassword}</Form.Control.Feedback>
+                    {regFailed && <Form.Control.Feedback type="invalid" tooltip>{t('errors.user_exist')}</Form.Control.Feedback>}
+                  </Form.Group>
+                  <Button variant="outline-primary" type="submit" className="w-100 mb-3">{t('basic.signup')}</Button>
+                </Form>
+              </Card.Body>
+              <Card.Footer className="p-4">
+                <div className="text-center">
+                  <span className="me-3">Уже есть аккаунт?</span>
+                  <Link to="/login">{t('basic.signin')}</Link>
+                </div>
+              </Card.Footer>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    </>
   );
 };
 
