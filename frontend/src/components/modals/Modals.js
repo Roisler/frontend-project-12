@@ -52,7 +52,7 @@ export const AddChannel = ({ onHide, setChannel }) => {
               autoFocus
               isInvalid={!formik.isValid}
             />
-            <Form.Label htmlFor="name" className="visually-hidden">{t('channels.name')}</Form.Label>
+            <Form.Label htmlFor="name" className="visually-hidden">Имя канала</Form.Label>
             <Form.Control.Feedback type="invalid">{formik.errors.name}</Form.Control.Feedback>
           </Form.Group>
           <div className="d-flex justify-content-end">
@@ -79,8 +79,7 @@ export const RemoveChannel = (props) => {
         <Modal.Title>{t('channels.remove')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>Все сообщения канала будут удалены, а активные пользователи перемещены!</p>
-        <p>Вы уверены, что хотите удалить канал?</p>
+        <p className="lead">Уверены?</p>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>{t('basic.cancel')}</Button>
@@ -127,7 +126,7 @@ export const RenameChannel = ({ modalInfo, onHide }) => {
               autoFocus
               isInvalid={!formik.isValid}
             />
-            <Form.Label htmlFor="name" className="visually-hidden">{t('channels.name')}</Form.Label>
+            <Form.Label htmlFor="name" className="visually-hidden">Имя канала</Form.Label>
             <Form.Control.Feedback type="invalid">{formik.errors.name}</Form.Control.Feedback>
           </Form.Group>
           <div className="d-flex justify-content-end">
