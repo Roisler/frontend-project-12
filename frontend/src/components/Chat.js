@@ -82,7 +82,7 @@ const Chat = ({ user, activeChannel }) => {
               name="body"
               type="text"
               placeholder="Введите сообщение..."
-              aria-describedby="basic-text"
+              aria-label="Новое сообщение"
               className="border-0 p-0 ps-2"
               onChange={formik.handleChange}
               value={formik.values.body}
