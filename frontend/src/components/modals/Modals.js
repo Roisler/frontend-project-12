@@ -50,9 +50,10 @@ export const AddChannel = ({ onHide, setChannel }) => {
               value={formik.values.name}
               required
               autoFocus
+              isInvalid={!formik.isValid}
             />
-            {!formik.isValid && <div>{formik.errors.name}</div>}
             <Form.Label htmlFor="name" className="visually-hidden">{t('channels.name')}</Form.Label>
+            <Form.Control.Feedback type="invalid">{formik.errors.name}</Form.Control.Feedback>
           </Form.Group>
           <div className="d-flex justify-content-end">
             <Button variant="secondary" className="me-3" onClick={onHide}>{t('basic.cancel')}</Button>
@@ -124,9 +125,10 @@ export const RenameChannel = ({ modalInfo, onHide }) => {
               value={formik.values.name}
               required
               autoFocus
+              isInvalid={!formik.isValid}
             />
-            {!formik.isValid && <div>{formik.errors.name}</div>}
             <Form.Label htmlFor="name" className="visually-hidden">{t('channels.name')}</Form.Label>
+            <Form.Control.Feedback type="invalid">{formik.errors.name}</Form.Control.Feedback>
           </Form.Group>
           <div className="d-flex justify-content-end">
             <Button variant="secondary" className="me-3" onClick={onHide}>{t('basic.cancel')}</Button>
