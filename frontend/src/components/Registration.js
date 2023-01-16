@@ -76,12 +76,12 @@ const Registration = () => {
                       name="username"
                       type="text"
                       value={formik.values.username}
-                      placeholder={t('basic.nickname')}
+                      placeholder={t('basic.username')}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       isInvalid={touched.username && !!errors.username}
                     />
-                    <Form.Label htmlFor="username">{t('basic.nickname')}</Form.Label>
+                    <Form.Label htmlFor="username">{t('basic.username')}</Form.Label>
                     <Form.Control.Feedback type="invalid" tooltip>{errors.username}</Form.Control.Feedback>
                   </Form.Group>
                   <Form.Group className="form-floating mb-4">

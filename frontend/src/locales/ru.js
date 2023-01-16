@@ -9,6 +9,7 @@ export default {
       send: 'Отправить',
       cancel: 'Отменить',
       nickname: 'Ваш ник',
+      username: 'Имя пользователя',
       password: 'Пароль',
       confirm_password: 'Подтвердите пароль',
     },
