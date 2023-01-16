@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import NavBar from './Navbar';
 
 const ErrorPage = () => (
@@ -10,12 +9,12 @@ const ErrorPage = () => (
         <h1 className="display-1 fw-bold">404</h1>
         <p className="fs-3">
           <span className="text-danger">Opps!</span>
-          Page not found.
+          Страница не найдена
         </p>
         <p className="lead">
-          The page you are looking for does not exist.
+          Но вы всегда можете перейти на домашнюю страницу
         </p>
-        <Link to="/" className="btn btn-primary">Go Home</Link>
+        <a href="/" className="btn btn-primary">Go Home</a>
       </div>
     </div>
   </>
