@@ -46,6 +46,7 @@ const ModalRenameChannel = ({ modalInfo, onHide }) => {
         <Form onSubmit={formik.handleSubmit}>
           <Form.Group className="mb-3">
             <Form.Control
+              id="name"
               name="name"
               onChange={formik.handleChange}
               type="text"
