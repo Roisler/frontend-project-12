@@ -19,7 +19,7 @@ export default {
       name: 'Название канала',
       channel_created: 'Канал создан',
       channel_renamed: 'Канал переименован',
-      channel_removed: 'Канал удален',
+      channel_removed: 'Канал удалён',
       control: 'Управление каналом',
       remove: 'Удалить',
       rename: 'Переименовать',
