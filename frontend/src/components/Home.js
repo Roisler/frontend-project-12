@@ -34,6 +34,7 @@ const renderModal = (props) => {
       setChannel={setChannel}
       onHide={hideModal}
       activeChannel={activeChannel}
+      socket={socket}
     />
   );
 };

@@ -8,6 +8,7 @@ export default {
       signup: 'Зарегистрироваться',
       send: 'Отправить',
       cancel: 'Отменить',
+      sure: 'Уверены',
       nickname: 'Ваш ник',
       username: 'Имя пользователя',
       password: 'Пароль',
@@ -29,7 +30,7 @@ export default {
       messageWithCount_many: '{{count}} сообщений',
     },
     validation: {
-      channel_exist: 'Такой канал уже существует',
+      channel_exist: 'Должно быть уникальным',
       name: 'От 3 до 20 символов',
       password_length: 'Не менее 6 символов',
       confirm_password: 'Пароли должны совпадать',

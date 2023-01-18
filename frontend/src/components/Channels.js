@@ -6,6 +6,7 @@ import {
   Dropdown,
   NavItem,
 } from 'react-bootstrap';
+import leoProfanity from 'leo-profanity';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { selectors as channelsSelectors } from '../slices/channelsSlice';
@@ -28,6 +29,7 @@ const Channels = ({ activeChannel, setActiveChannel, handleShow }) => {
       <Nav fill as="ul" variant="pills" className="flex-column px-2">
         {channels.map((channel) => {
           const { id, name, removable } = channel;
+          const cleanName = leoProfanity.clean(name);
           return (
             <NavItem as="li" key={id} className="w-100">
               {
@@ -40,7 +42,7 @@ const Channels = ({ activeChannel, setActiveChannel, handleShow }) => {
                       className="w-100 rounded-0 text-start text-truncate"
                     >
                       <span className="me-1">#</span>
-                      {name}
+                      {cleanName}
                     </Button>
                     <Dropdown.Toggle split variant={getVariant(name)} className="rounded-0" />
                     <Dropdown.Menu>
