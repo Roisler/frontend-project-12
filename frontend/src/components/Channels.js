@@ -38,6 +38,7 @@ const Channel = ({ channel, handleShow }) => {
             {cleanName}
           </Button>
           <Dropdown.Toggle split variant={isActive(id)} className="rounded-0" />
+          <span className="visually-hidden">Управление каналом</span>
           <Dropdown.Menu>
             <Dropdown.Item onClick={handleShow('removing', channel)}>{t('channels.remove')}</Dropdown.Item>
             <Dropdown.Item onClick={handleShow('renaming', channel)}>{t('channels.rename')}</Dropdown.Item>
