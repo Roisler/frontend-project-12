@@ -15,6 +15,7 @@ export default {
       confirm_password: 'Подтвердите пароль',
     },
     channels: {
+      channels: 'Каналы',
       name: 'Название канала',
       channel_created: 'Канал создан',
       channel_renamed: 'Канал переименован',

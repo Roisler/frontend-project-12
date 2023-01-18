@@ -3,7 +3,7 @@ import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
 
 const channelsAdapter = createEntityAdapter();
 const initialState = channelsAdapter.getInitialState({
-  defaultChannel: null,
+  activeChannel: null,
 });
 
 export const channelsSlice = createSlice({
@@ -14,11 +14,11 @@ export const channelsSlice = createSlice({
     addChannels: channelsAdapter.addMany,
     removeChannel: (state, { payload }) => {
       channelsAdapter.removeOne(state, payload);
-      state.defaultChannel = (state.defaultChannel.id === payload) ? { name: 'general', id: 1 } : state.defaultChannel;
+      state.activeChannel = (state.activeChannel.id === payload) ? { name: 'general', id: 1 } : state.activeChannel;
     },
     updateChannel: channelsAdapter.updateOne,
-    setDefaultChannel: (state, action) => {
-      state.defaultChannel = action.payload;
+    setActiveChannel: (state, action) => {
+      state.activeChannel = action.payload;
     },
   },
 });

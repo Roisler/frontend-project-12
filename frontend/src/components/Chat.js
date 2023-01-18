@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect, useRef } from 'react';
-import io from 'socket.io-client';
 import { useFormik } from 'formik';
 import { useSelector } from 'react-redux';
 import * as yup from 'yup';
@@ -9,14 +8,14 @@ import {
   InputGroup,
   Button,
 } from 'react-bootstrap';
-import { uniqueId } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import leoProfanity from 'leo-profanity';
 import { selectors as messagesSelectors } from '../slices/messagesSlice';
+import useApi from '../hooks/useApi';
 
-const socket = io();
 const Chat = ({ user, activeChannel }) => {
   const { t } = useTranslation();
+  const api = useApi();
   const messages = useSelector(messagesSelectors.selectAll);
 
   const formik = useFormik({
@@ -28,13 +27,8 @@ const Chat = ({ user, activeChannel }) => {
         body: leoProfanity.clean(values.body),
         username: user.username,
         channelId: activeChannel.id,
-        id: uniqueId('message_'),
       };
-      socket.emit('newMessage', message, (data) => {
-        if (data.status !== 'ok') {
-          throw new Error('Network error');
-        }
-      });
+      api.sendNewMessage(message);
       formik.resetForm();
     },
     validationSchema: yup.object({

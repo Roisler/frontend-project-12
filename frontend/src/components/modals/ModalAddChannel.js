@@ -8,24 +8,26 @@ import {
 import { useSelector } from 'react-redux';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import { selectors } from '../../slices/channelsSlice';
+import useApi from '../../hooks/useApi';
 
-const ModalAddChannel = ({ onHide, setChannel, socket }) => {
+const ModalAddChannel = ({ onHide }) => {
   const { t } = useTranslation();
+  const api = useApi();
   const channelsNames = useSelector(selectors.selectAll).map((channel) => channel.name);
   const formik = useFormik({
     initialValues: {
       name: '',
     },
-    onSubmit: (values) => {
-      socket.emit('newChannel', values, (response) => {
-        const newChannel = response.data;
-        setChannel(newChannel);
-      });
+    onSubmit: async (values) => {
+      await api.addChannel(values);
       onHide();
+      toast.success(t('channels.channel_created'));
     },
     validationSchema: yup.object({
       name: yup.string()
+        .trim()
         .min(3, t('validation.name'))
         .max(20, t('validation.name'))
         .notOneOf([channelsNames], t('validation.channel_exist')),

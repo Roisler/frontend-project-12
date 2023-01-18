@@ -7,6 +7,8 @@ import {
   useLocation,
 } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import { io } from 'socket.io-client';
+import ApiContext, { buildApi } from '../contexts/ApiContext';
 import Home from './Home';
 import LoginPage from './LoginPage';
 import Registration from './Registration';
@@ -26,6 +28,10 @@ const PrivateRoute = ({ children }) => {
 };
 
 const App = () => {
+  const socket = io();
+
+  const api = buildApi(socket);
+
   const router = createBrowserRouter([
     {
       path: '/',
@@ -47,23 +53,25 @@ const App = () => {
   ]);
 
   return (
-    <AuthProvider>
-      <div className="d-flex flex-column h-100">
-        <RouterProvider router={router} />
-      </div>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-    </AuthProvider>
+    <ApiContext.Provider value={api}>
+      <AuthProvider>
+        <div className="d-flex flex-column h-100">
+          <RouterProvider router={router} />
+        </div>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+      </AuthProvider>
+    </ApiContext.Provider>
   );
 };
 

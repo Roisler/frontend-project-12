@@ -26,6 +26,7 @@ const init = async () => {
   leoProfanity.clearList();
   leoProfanity.add(leoProfanity.getDictionary('en'));
   leoProfanity.add(leoProfanity.getDictionary('ru'));
+
   const vdom = (
     <RollbarProvider config={rollbarConfig}>
       <ErrorBoundary>

@@ -4,14 +4,17 @@ import {
   Button,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
+import useApi from '../../hooks/useApi';
 
 const ModalRemoveChannel = (props) => {
   const { t } = useTranslation();
-  const {
-    modalInfo, onHide, socket,
-  } = props;
+  const api = useApi();
+  const { modalInfo, onHide } = props;
   const handleRemove = () => {
-    socket.emit('removeChannel', modalInfo.channel);
+    api.removeChannel(modalInfo.channel);
+    toast.success(t('channels.channel_removed'));
+    onHide();
   };
   return (
     <Modal show centered>

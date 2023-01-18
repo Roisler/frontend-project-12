@@ -8,27 +8,35 @@ import {
 import { useSelector } from 'react-redux';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import { selectors } from '../../slices/channelsSlice';
+import useApi from '../../hooks/useApi';
 
-const ModalRenameChannel = ({ modalInfo, onHide, socket }) => {
+const ModalRenameChannel = ({ modalInfo, onHide }) => {
   const { t } = useTranslation();
+  const api = useApi();
   const channelsNames = useSelector(selectors.selectAll).map((channel) => channel.name);
   const formik = useFormik({
     initialValues: modalInfo.channel,
     onSubmit: (values) => {
-      socket.emit('renameChannel', values);
+      api.renameChannel(values);
+      toast.success(t('channels.channel_renamed'));
+      onHide();
     },
     validationSchema: yup.object({
       name: yup.string()
+        .trim()
         .min(3, t('validation.name'))
         .max(20, t('validation.name'))
         .notOneOf([channelsNames], t('validation.channel_exist')),
     }),
   });
+
   const inputRef = useRef();
   useEffect(() => {
     inputRef.current.select();
   }, []);
+
   return (
     <Modal show centered>
       <Modal.Header closeButton onHide={onHide}>

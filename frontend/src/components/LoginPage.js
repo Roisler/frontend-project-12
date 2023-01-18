@@ -13,6 +13,7 @@ import {
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import useAuth from '../hooks/useAuth';
 import NavBar from './Navbar';
@@ -42,11 +43,14 @@ const Login = () => {
         localStorage.setItem('user', JSON.stringify({ username, token }));
         auth.logIn();
       } catch (err) {
-        if (err.name === 'AxiosError' && err.response.status === 401) {
+        if (err.response.status === 401) {
           setAuthFailed(true);
           return;
         }
-        throw err;
+        if (err.isAxiosErr) {
+          toast.error(t('errors.connect'));
+        }
+        throw new Error(err.message);
       }
     },
   });
