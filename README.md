@@ -26,11 +26,12 @@ The application is a simple analogue of Slack chat.
 8. leo-profanity
 9. axios
 
-### Instalation
+### Installation
 
+## Clone the repository
 
 ```$ git clone https://github.com/Roisler/frontend-project-12.git```
 
-Install Hexlet Chat
+## Install dependenses
 
 ```$ make install```
