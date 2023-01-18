@@ -28,10 +28,10 @@ The application is a simple analogue of Slack chat.
 
 ### Installation
 
-## Clone the repository
+#### Clone the repository
 
 ```$ git clone https://github.com/Roisler/frontend-project-12.git```
 
-## Install dependenses
+#### Install dependenses
 
 ```$ make install```
