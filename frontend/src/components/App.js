@@ -6,6 +6,7 @@ import {
   Navigate,
   useLocation,
 } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import { io } from 'socket.io-client';
 import ApiContext, { buildApi } from '../contexts/ApiContext';
@@ -15,6 +16,8 @@ import Registration from './Registration';
 import ErrorPage from './ErrorPage';
 import { AuthProvider } from '../contexts/AutorizationContext';
 import useAuth from '../hooks/useAuth';
+import { actions as channelsActions } from '../slices/channelsSlice';
+import { actions as messagesActions } from '../slices/messagesSlice';
 
 const PrivateRoute = ({ children }) => {
   const auth = useAuth();
@@ -29,8 +32,27 @@ const PrivateRoute = ({ children }) => {
 
 const App = () => {
   const socket = io();
-
+  const dispatch = useDispatch();
   const api = buildApi(socket);
+
+  socket.on('newChannel', (channel) => {
+    dispatch(channelsActions.addChannel(channel));
+    dispatch(channelsActions.setActiveChannel(channel));
+  });
+
+  socket.on('renameChannel', (channel) => {
+    const { id, name } = channel;
+    dispatch(channelsActions.updateChannel({ id, changes: { name } }));
+    dispatch(channelsActions.setActiveChannel(channel));
+  });
+
+  socket.on('removeChannel', (channel) => {
+    dispatch(channelsActions.removeChannel(channel.id));
+  });
+
+  socket.on('newMessage', (message) => {
+    dispatch(messagesActions.addMessage(message));
+  });
 
   const router = createBrowserRouter([
     {

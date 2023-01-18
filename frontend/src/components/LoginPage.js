@@ -10,7 +10,7 @@ import {
   Row,
   Col,
 } from 'react-bootstrap';
-import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -22,12 +22,10 @@ const Login = () => {
   const { t } = useTranslation();
   const auth = useAuth();
   const [authFailed, setAuthFailed] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
   useEffect(() => {
     if (auth.isAuth) {
-      const { from } = location.state || { from: { pathname: '/' } };
-      navigate(from);
+      navigate({ pathname: '/' });
     }
   }, [auth.isAuth]);
   const formik = useFormik({

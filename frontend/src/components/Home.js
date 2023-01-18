@@ -13,6 +13,7 @@ import getModal from './modals/index';
 import Channels from './Channels';
 import routes from '../routes';
 import NavBar from './Navbar';
+import useAuth from '../hooks/useAuth';
 
 const renderModal = (props) => {
   const {
@@ -34,6 +35,8 @@ const renderModal = (props) => {
 
 const Home = () => {
   const [activeChannel, setActiveChannel] = useState({});
+  const { getAuthHeader, getUsername } = useAuth();
+  const username = getUsername();
   const [modalInfo, setModalInfo] = useState({ type: null, channel: null });
 
   const hideModal = () => setModalInfo({ type: null, channel: null });
@@ -41,7 +44,6 @@ const Home = () => {
 
   const dispatch = useDispatch();
 
-  const user = JSON.parse(localStorage.getItem('user'));
   const currentChannel = useSelector((state) => state.channels.activeChannel);
 
   useEffect(() => {
@@ -54,7 +56,7 @@ const Home = () => {
     const getContent = async () => {
       const response = await axios.get(
         routes.dataPath(),
-        { headers: { Authorization: `Bearer ${user.token}` } },
+        { headers: getAuthHeader() },
       );
       const { channels, messages, currentChannelId } = response.data;
       dispatch(channelsActions.addChannels(channels));
@@ -63,7 +65,7 @@ const Home = () => {
       dispatch(channelsActions.setActiveChannel(defaultActiveChannel));
     };
     getContent();
-  }, []);
+  }, [dispatch]);
 
   return (
     <>
@@ -74,7 +76,7 @@ const Home = () => {
             <Channels handleShow={showModal} />
           </Col>
           <Col className="h-100 p-0">
-            <Chat user={user} activeChannel={activeChannel} />
+            <Chat user={username} activeChannel={activeChannel} />
           </Col>
         </Row>
         {renderModal({ modalInfo, hideModal, activeChannel })}

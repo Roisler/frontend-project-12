@@ -7,15 +7,22 @@ import React, {
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-  const isLogin = () => {
-    const user = localStorage.getItem('user');
+  const user = localStorage.getItem('user');
+
+  const [isAuth, setIsAuth] = useState(!!user);
+  const getUsername = () => {
     if (user) {
-      return true;
+      const { username } = JSON.parse(user);
+      return username;
     }
-    return false;
+    return null;
   };
 
-  const [isAuth, setIsAuth] = useState(isLogin());
+  const getAuthHeader = () => {
+    const { token } = JSON.parse(localStorage.getItem('user'));
+    return { Authorization: `Bearer ${token}` };
+  };
+
   const logIn = () => setIsAuth(true);
   const logOut = () => {
     localStorage.removeItem('user');
@@ -25,6 +32,8 @@ export const AuthProvider = ({ children }) => {
     isAuth,
     logIn,
     logOut,
+    getAuthHeader,
+    getUsername,
   }), [isAuth]);
 
   return (
