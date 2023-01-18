@@ -30,11 +30,13 @@ const init = async () => {
   const vdom = (
     <RollbarProvider config={rollbarConfig}>
       <ErrorBoundary>
-        <Provider store={store}>
-          <I18nextProvider i18n={i18nInstance}>
-            <App />
-          </I18nextProvider>
-        </Provider>
+        <React.StrictMode>
+          <Provider store={store}>
+            <I18nextProvider i18n={i18nInstance}>
+              <App />
+            </I18nextProvider>
+          </Provider>
+        </React.StrictMode>
       </ErrorBoundary>
     </RollbarProvider>
   );

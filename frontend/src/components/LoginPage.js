@@ -36,18 +36,17 @@ const Login = () => {
       password: '',
     },
     onSubmit: async (values) => {
-      setAuthFailed(false);
       try {
         const response = await axios.post('/api/v1/login', values);
         const { username, token } = response.data;
         localStorage.setItem('user', JSON.stringify({ username, token }));
         auth.logIn();
       } catch (err) {
-        if (err.response.status === 401) {
+        if (err.response?.status === 401) {
           setAuthFailed(true);
           return;
         }
-        if (err.isAxiosErr) {
+        if (err.isAxiosError) {
           toast.error(t('errors.connect'));
         }
         throw new Error(err.message);

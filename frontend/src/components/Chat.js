@@ -37,11 +37,18 @@ const Chat = ({ user, activeChannel }) => {
   });
 
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
       behavior: 'smooth',
     });
+    inputRef.current?.focus();
   }, [messages]);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, [activeChannel]);
 
   const getTotalMessages = (id) => messages.filter((message) => message.channelId === id).length;
 
@@ -80,7 +87,7 @@ const Chat = ({ user, activeChannel }) => {
               className="border-0 p-0 ps-2"
               onChange={formik.handleChange}
               value={formik.values.body}
-              autoFocus
+              ref={inputRef}
               required
             />
             <Button
