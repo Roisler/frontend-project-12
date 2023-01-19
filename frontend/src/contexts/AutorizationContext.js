@@ -7,34 +7,29 @@ import React, {
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-  const user = localStorage.getItem('user');
+  const currentUser = localStorage.getItem('user') && JSON.parse(localStorage.getItem('user'));
 
-  const [isAuth, setIsAuth] = useState(!!user);
-  const getUsername = () => {
-    if (user) {
-      const { username } = JSON.parse(user);
-      return username;
-    }
-    return null;
-  };
+  const [user, setUser] = useState(currentUser);
 
   const getAuthHeader = () => {
-    const { token } = JSON.parse(localStorage.getItem('user'));
+    const { token } = user;
     return { Authorization: `Bearer ${token}` };
   };
 
-  const logIn = () => setIsAuth(true);
+  const logIn = (loggedUser) => {
+    localStorage.setItem('user', JSON.stringify(loggedUser));
+    setUser(loggedUser);
+  };
   const logOut = () => {
     localStorage.removeItem('user');
-    setIsAuth(false);
+    setUser();
   };
   const value = useMemo(() => ({
-    isAuth,
+    user,
     logIn,
     logOut,
     getAuthHeader,
-    getUsername,
-  }), [isAuth]);
+  }), [user]);
 
   return (
     <AuthContext.Provider value={value}>

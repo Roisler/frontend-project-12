@@ -7,6 +7,7 @@ import {
   Container,
   Col,
   Row,
+  Spinner,
 } from 'react-bootstrap';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -31,9 +32,8 @@ const Registration = () => {
     onSubmit: async (values) => {
       try {
         const response = await axios.post(routes.signupPath(), values);
-        const { username, token } = response.data;
-        localStorage.setItem('user', JSON.stringify({ username, token }));
-        auth.logIn();
+        const user = response.data;
+        auth.logIn(user);
         navigate({ pathname: '/' });
         setRegFailed(false);
       } catch (e) {
@@ -113,12 +113,23 @@ const Registration = () => {
                     <Form.Control.Feedback type="invalid" tooltip>{errors.confirmPassword}</Form.Control.Feedback>
                     {regFailed && <Form.Control.Feedback type="invalid" tooltip>{t('errors.user_exist')}</Form.Control.Feedback>}
                   </Form.Group>
-                  <Button variant="outline-primary" type="submit" className="w-100 mb-3">{t('basic.signup')}</Button>
+                  <Button variant="outline-primary" type="submit" className="w-100 mb-3">
+                    {formik.isSubmitting && (
+                      <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                      />
+                    )}
+                    {t('basic.signup')}
+                  </Button>
                 </Form>
               </Card.Body>
               <Card.Footer className="p-4">
                 <div className="text-center">
-                  <span className="me-3">Уже есть аккаунт?</span>
+                  <span className="me-3">{`${t('basic.already_registred')}?`}</span>
                   <Link to="/login">{t('basic.signin')}</Link>
                 </div>
               </Card.Footer>

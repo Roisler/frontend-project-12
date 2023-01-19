@@ -25,7 +25,7 @@ const Chat = ({ user, activeChannel }) => {
     onSubmit: (values) => {
       const message = {
         body: leoProfanity.clean(values.body),
-        username: user.username,
+        username: user,
         channelId: activeChannel.id,
       };
       api.sendNewMessage(message);

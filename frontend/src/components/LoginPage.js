@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState, useEffect } from 'react';
 import {
   Form,
@@ -9,6 +8,7 @@ import {
   Container,
   Row,
   Col,
+  Spinner,
 } from 'react-bootstrap';
 import { useNavigate, Link } from 'react-router-dom';
 import { useFormik } from 'formik';
@@ -24,10 +24,10 @@ const Login = () => {
   const [authFailed, setAuthFailed] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
-    if (auth.isAuth) {
+    if (auth.user) {
       navigate({ pathname: '/' });
     }
-  }, [auth.isAuth]);
+  }, [auth.user]);
   const formik = useFormik({
     initialValues: {
       username: '',
@@ -36,9 +36,8 @@ const Login = () => {
     onSubmit: async (values) => {
       try {
         const response = await axios.post('/api/v1/login', values);
-        const { username, token } = response.data;
-        localStorage.setItem('user', JSON.stringify({ username, token }));
-        auth.logIn();
+        const user = response.data;
+        auth.logIn(user);
       } catch (err) {
         if (err.response?.status === 401) {
           setAuthFailed(true);
@@ -89,12 +88,23 @@ const Login = () => {
                     <Form.Label htmlFor="password">{t('basic.password')}</Form.Label>
                     <Form.Control.Feedback type="invalid">{t('errors.invalid_auth')}</Form.Control.Feedback>
                   </Form.Group>
-                  <Button variant="outline-primary" type="submit" className="w-100 mb-3">{t('basic.signin')}</Button>
+                  <Button variant="outline-primary" type="submit" className="w-100 mb-3">
+                    {formik.isSubmitting && (
+                      <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                      />
+                    )}
+                    {t('basic.signin')}
+                  </Button>
                 </Form>
               </Card.Body>
               <Card.Footer className="p-4">
                 <div className="text-center">
-                  <span className="me-3">Нет аккаунта?</span>
+                  <span className="me-3">{`${t('basic.not_registred')}?`}</span>
                   <Link to="/signup">{t('basic.registration')}</Link>
                 </div>
               </Card.Footer>

@@ -35,8 +35,8 @@ const renderModal = (props) => {
 
 const Home = () => {
   const [activeChannel, setActiveChannel] = useState({});
-  const { getAuthHeader, getUsername } = useAuth();
-  const username = getUsername();
+  const auth = useAuth();
+  const { username } = auth.user;
   const [modalInfo, setModalInfo] = useState({ type: null, channel: null });
 
   const hideModal = () => setModalInfo({ type: null, channel: null });
@@ -54,15 +54,21 @@ const Home = () => {
 
   useEffect(() => {
     const getContent = async () => {
-      const response = await axios.get(
-        routes.dataPath(),
-        { headers: getAuthHeader() },
-      );
-      const { channels, messages, currentChannelId } = response.data;
-      dispatch(channelsActions.addChannels(channels));
-      dispatch(messagesActions.addMessages(messages));
-      const defaultActiveChannel = channels.find(({ id }) => id === currentChannelId);
-      dispatch(channelsActions.setActiveChannel(defaultActiveChannel));
+      try {
+        const response = await axios.get(
+          routes.dataPath(),
+          { headers: auth.getAuthHeader() },
+        );
+        const { channels, messages, currentChannelId } = response.data;
+        dispatch(channelsActions.addChannels(channels));
+        dispatch(messagesActions.addMessages(messages));
+        const defaultActiveChannel = channels.find(({ id }) => id === currentChannelId);
+        dispatch(channelsActions.setActiveChannel(defaultActiveChannel));
+      } catch (err) {
+        if (err.response?.status === 401) {
+          auth.logOut();
+        }
+      }
     };
     getContent();
   }, [dispatch]);

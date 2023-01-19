@@ -6,6 +6,8 @@ export default {
       logout: 'Выйти',
       registration: 'Регистрация',
       signup: 'Зарегистрироваться',
+      not_registred: 'Нет аккаунта',
+      already_registred: 'Уже есть аккаунт',
       send: 'Отправить',
       cancel: 'Отменить',
       sure: 'Уверены',

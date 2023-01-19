@@ -11,7 +11,7 @@ const NavBar = () => {
     <Navbar expand="lg" variant="light" bg="light" className="shadow">
       <Container>
         <Link className="navbar-brand" to="/">Hexlet Chat</Link>
-        {auth.isAuth && <Button variant="primary" onClick={() => auth.logOut()}>{t('basic.logout')}</Button>}
+        {auth.user && <Button variant="primary" onClick={() => auth.logOut()}>{t('basic.logout')}</Button>}
       </Container>
     </Navbar>
   );
