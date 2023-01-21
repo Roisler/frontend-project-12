@@ -53,6 +53,7 @@ const ModalRenameChannel = ({ modalInfo, onHide }) => {
               value={formik.values.name}
               required
               ref={inputRef}
+              disabled={formik.isSubmitting}
               isInvalid={!formik.isValid}
             />
             <Form.Label htmlFor="name" className="visually-hidden">Имя канала</Form.Label>
@@ -60,7 +61,7 @@ const ModalRenameChannel = ({ modalInfo, onHide }) => {
           </Form.Group>
           <div className="d-flex justify-content-end">
             <Button variant="secondary" className="me-3" onClick={onHide}>{t('basic.cancel')}</Button>
-            <Button variant="primary" type="submit" disabled={!formik.isValid}>{t('basic.send')}</Button>
+            <Button variant="primary" type="submit" disabled={!formik.isValid || formik.isSubmitting}>{t('basic.send')}</Button>
           </div>
         </Form>
       </Modal.Body>

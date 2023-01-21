@@ -87,6 +87,7 @@ const Chat = ({ user, activeChannel }) => {
               className="border-0 p-0 ps-2"
               onChange={formik.handleChange}
               value={formik.values.body}
+              disabled={formik.isSubmitting}
               ref={inputRef}
               required
             />
@@ -94,7 +95,7 @@ const Chat = ({ user, activeChannel }) => {
               type="submit"
               variant="outline-primary"
               id="button-text"
-              disabled={formik.values.body === ''}
+              disabled={formik.values.body === '' || formik.isSubmitting}
             >
               {t('basic.send')}
             </Button>

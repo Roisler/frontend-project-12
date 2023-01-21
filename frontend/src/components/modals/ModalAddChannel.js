@@ -55,6 +55,7 @@ const ModalAddChannel = ({ onHide }) => {
               value={formik.values.name}
               required
               ref={inputRef}
+              disabled={formik.isSubmitting}
               isInvalid={!formik.isValid}
             />
             <Form.Label htmlFor="name" className="visually-hidden">Имя канала</Form.Label>

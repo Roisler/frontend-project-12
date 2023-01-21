@@ -34,7 +34,6 @@ const Login = () => {
     onSubmit: async (values) => {
       try {
         const response = await axios.post(routes.loginPath(), values);
-        console.log(response);
         const user = response.data;
         auth.logIn(user);
         setAuthFailed(false);
@@ -74,6 +73,7 @@ const Login = () => {
                       value={formik.values.username}
                       placeholder={t('basic.nickname')}
                       onChange={formik.handleChange}
+                      disabled={formik.isSubmitting}
                       isInvalid={authFailed}
                     />
                     <Form.Label htmlFor="username">{t('basic.nickname')}</Form.Label>
@@ -86,12 +86,13 @@ const Login = () => {
                       placeholder={t('basic.password')}
                       onChange={formik.handleChange}
                       value={formik.values.password}
+                      disabled={formik.isSubmitting}
                       isInvalid={authFailed}
                     />
                     <Form.Label htmlFor="password">{t('basic.password')}</Form.Label>
                     <Form.Control.Feedback type="invalid">{t('errors.invalid_auth')}</Form.Control.Feedback>
                   </Form.Group>
-                  <Button variant="outline-primary" type="submit" className="w-100 mb-3">
+                  <Button variant="outline-primary" type="submit" className="w-100 mb-3" disabled={formik.isSubmitting}>
                     {formik.isSubmitting && (
                       <Spinner
                         as="span"

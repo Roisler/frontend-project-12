@@ -85,6 +85,7 @@ const Registration = () => {
                       placeholder={t('basic.username')}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
+                      disabled={formik.isSubmitting}
                       isInvalid={touched.username && !!errors.username}
                     />
                     <Form.Label htmlFor="username">{t('basic.username')}</Form.Label>
@@ -99,6 +100,7 @@ const Registration = () => {
                       onChange={formik.handleChange}
                       value={formik.values.password}
                       onBlur={formik.handleBlur}
+                      disabled={formik.isSubmitting}
                       isInvalid={touched.password && !!errors.password}
                     />
                     <Form.Label htmlFor="password">{t('basic.password')}</Form.Label>
@@ -113,13 +115,14 @@ const Registration = () => {
                       onChange={formik.handleChange}
                       value={formik.values.confirmPassword}
                       onBlur={formik.handleBlur}
+                      disabled={formik.isSubmitting}
                       isInvalid={(touched.confirmPassword && !!errors.confirmPassword) || regFailed}
                     />
                     <Form.Label htmlFor="confirmPassword">{t('basic.confirm_password')}</Form.Label>
                     <Form.Control.Feedback type="invalid" tooltip>{errors.confirmPassword}</Form.Control.Feedback>
                     {regFailed && <Form.Control.Feedback type="invalid" tooltip>{t('errors.user_exist')}</Form.Control.Feedback>}
                   </Form.Group>
-                  <Button variant="outline-primary" type="submit" className="w-100 mb-3">
+                  <Button variant="outline-primary" type="submit" className="w-100 mb-3" disabled={formik.isSubmitting}>
                     {formik.isSubmitting && (
                       <Spinner
                         as="span"
