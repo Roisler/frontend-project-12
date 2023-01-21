@@ -13,6 +13,7 @@ import Registration from './Registration';
 import ErrorPage from './ErrorPage';
 import { AuthProvider } from '../contexts/AutorizationContext';
 import useAuth from '../hooks/useAuth';
+import routes from '../routes';
 
 const PrivateRoute = ({ children }) => {
   const auth = useAuth();
@@ -21,14 +22,14 @@ const PrivateRoute = ({ children }) => {
     return children;
   }
   return (
-    <Navigate to="/login" state={{ from: location }} />
+    <Navigate to={routes.login} state={{ from: location }} />
   );
 };
 
 const App = () => {
   const router = createBrowserRouter([
     {
-      path: '/',
+      path: `${routes.chat}`,
       element: (
         <PrivateRoute>
           <Home />
@@ -37,11 +38,11 @@ const App = () => {
       errorElement: <ErrorPage />,
     },
     {
-      path: '/login',
+      path: `${routes.login}`,
       element: <LoginPage />,
     },
     {
-      path: '/signup',
+      path: `${routes.signup}`,
       element: <Registration />,
     },
   ]);

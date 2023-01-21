@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Form,
   FormControl,
@@ -10,24 +10,22 @@ import {
   Col,
   Spinner,
 } from 'react-bootstrap';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useFormik } from 'formik';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import useAuth from '../hooks/useAuth';
 import NavBar from './Navbar';
+import routes from '../routes';
 
 const Login = () => {
   const { t } = useTranslation();
   const auth = useAuth();
   const [authFailed, setAuthFailed] = useState(false);
   const navigate = useNavigate();
-  useEffect(() => {
-    if (auth.user) {
-      navigate({ pathname: '/' });
-    }
-  }, [auth.user]);
+  const location = useLocation();
+
   const formik = useFormik({
     initialValues: {
       username: '',
@@ -35,9 +33,13 @@ const Login = () => {
     },
     onSubmit: async (values) => {
       try {
-        const response = await axios.post('/api/v1/login', values);
+        const response = await axios.post(routes.loginPath(), values);
+        console.log(response);
         const user = response.data;
         auth.logIn(user);
+        setAuthFailed(false);
+        const { from } = location.state || { from: { pathname: routes.chat } };
+        navigate(from);
       } catch (err) {
         if (err.response?.status === 401) {
           setAuthFailed(true);
@@ -45,8 +47,9 @@ const Login = () => {
         }
         if (err.isAxiosError) {
           toast.error(t('errors.connect'));
+        } else {
+          toast.error(t('errors.unknown'));
         }
-        throw new Error(err.message);
       }
     },
   });
@@ -105,7 +108,7 @@ const Login = () => {
               <Card.Footer className="p-4">
                 <div className="text-center">
                   <span className="me-3">{`${t('basic.not_registred')}?`}</span>
-                  <Link to="/signup">{t('basic.registration')}</Link>
+                  <Link to={routes.signup}>{t('basic.registration')}</Link>
                 </div>
               </Card.Footer>
             </Card>

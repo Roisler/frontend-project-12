@@ -8,17 +8,15 @@ const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
   const currentUser = localStorage.getItem('user') && JSON.parse(localStorage.getItem('user'));
-
   const [user, setUser] = useState(currentUser);
-
   const getAuthHeader = () => {
     const { token } = user;
     return { Authorization: `Bearer ${token}` };
   };
 
   const logIn = (loggedUser) => {
-    localStorage.setItem('user', JSON.stringify(loggedUser));
     setUser(loggedUser);
+    localStorage.setItem('user', JSON.stringify(loggedUser));
   };
   const logOut = () => {
     localStorage.removeItem('user');

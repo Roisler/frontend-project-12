@@ -14,6 +14,7 @@ import * as yup from 'yup';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import useAuth from '../hooks/useAuth';
 import routes from '../routes';
 import NavBar from './Navbar';
@@ -34,13 +35,18 @@ const Registration = () => {
         const response = await axios.post(routes.signupPath(), values);
         const user = response.data;
         auth.logIn(user);
-        navigate({ pathname: '/' });
+        navigate(routes.chat);
         setRegFailed(false);
-      } catch (e) {
-        if (e.response.status === 409) {
+      } catch (err) {
+        if (err.response?.status === 409) {
           setRegFailed(true);
+          return;
         }
-        throw e;
+        if (err.isAxiosError) {
+          toast.error(t('errors.connect'));
+        } else {
+          toast.error(t('errors.unknown'));
+        }
       }
     },
     validationSchema: yup.object({
@@ -130,7 +136,7 @@ const Registration = () => {
               <Card.Footer className="p-4">
                 <div className="text-center">
                   <span className="me-3">{`${t('basic.already_registred')}?`}</span>
-                  <Link to="/login">{t('basic.signin')}</Link>
+                  <Link to={routes.login}>{t('basic.signin')}</Link>
                 </div>
               </Card.Footer>
             </Card>
