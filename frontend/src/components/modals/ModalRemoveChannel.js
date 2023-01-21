@@ -11,8 +11,8 @@ const ModalRemoveChannel = (props) => {
   const { t } = useTranslation();
   const api = useApi();
   const { modalInfo, onHide } = props;
-  const handleRemove = () => {
-    api.removeChannel(modalInfo.channel);
+  const handleRemove = async () => {
+    await api.removeChannel(modalInfo.channel);
     toast.success(t('channels.channel_removed'));
     onHide();
   };

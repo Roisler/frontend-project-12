@@ -14,13 +14,14 @@ import { actions as messagesActions } from './slices/messagesSlice';
 
 const init = async () => {
   const socket = io();
-  const wrapper = async (event, data) => {
-    await socket.emit(event, data, (response) => {
-      if (response.status !== 'ok') {
-        throw new Error(`Network Error. ${event} failed`);
+  const wrapper = (event, data) => new Promise((resolve, reject) => {
+    socket.emit(event, data, (response) => {
+      if (response?.status === 'ok') {
+        resolve(response.data);
       }
+      reject();
     });
-  };
+  });
 
   const chatApi = {
     addChannel: (data) => wrapper('newChannel', data),

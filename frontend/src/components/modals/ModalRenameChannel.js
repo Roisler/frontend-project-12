@@ -18,8 +18,8 @@ const ModalRenameChannel = ({ modalInfo, onHide }) => {
   const channelsNames = useSelector(selectors.selectAll).map((channel) => channel.name);
   const formik = useFormik({
     initialValues: modalInfo.channel,
-    onSubmit: (values) => {
-      api.renameChannel(values);
+    onSubmit: async (values) => {
+      await api.renameChannel(values);
       toast.success(t('channels.channel_renamed'));
       onHide();
     },

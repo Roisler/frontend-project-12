@@ -63,7 +63,7 @@ const ModalAddChannel = ({ onHide }) => {
           </Form.Group>
           <div className="d-flex justify-content-end">
             <Button variant="secondary" className="me-3" onClick={onHide}>{t('basic.cancel')}</Button>
-            <Button variant="primary" type="submit" disabled={!formik.isValid}>{t('basic.send')}</Button>
+            <Button variant="primary" type="submit" disabled={!formik.isValid || formik.isSubmitting}>{t('basic.send')}</Button>
           </div>
         </Form>
       </Modal.Body>
