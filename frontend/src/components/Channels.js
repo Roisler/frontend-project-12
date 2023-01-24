@@ -10,19 +10,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { selectors as channelsSelectors, actions as channelsActions } from '../slices/channelsSlice';
 
-const Channel = ({ channel, handleShow }) => {
+const Channel = ({ channel, handleShow, isActive }) => {
   const { t } = useTranslation();
   const { id, name, removable } = channel;
   const dispatch = useDispatch();
-  const activeChannel = useSelector((state) => state.channels.activeChannel);
-  const isActive = (channelId) => {
-    if (activeChannel.id === channelId) {
-      return 'secondary';
-    }
-    return 'light';
-  };
-  const setActive = (currentChannel) => {
-    dispatch(channelsActions.setActiveChannel(currentChannel));
+  const setActive = (currentChannelId) => {
+    dispatch(channelsActions.setActiveChannel(currentChannelId));
   };
   const cleanName = leoProfanity.clean(name);
   if (removable) {
@@ -30,14 +23,14 @@ const Channel = ({ channel, handleShow }) => {
       <NavItem as="li" className="w-100">
         <Dropdown as={Button.Group} className="d-flex">
           <Button
-            variant={isActive(id)}
-            onClick={() => setActive(channel)}
+            variant={isActive ? 'secondary' : 'light'}
+            onClick={() => setActive(id)}
             className="w-100 rounded-0 text-start text-truncate"
           >
             <span className="me-1">#</span>
             {cleanName}
           </Button>
-          <Dropdown.Toggle split variant={isActive(id)} className="rounded-0">
+          <Dropdown.Toggle split variant={isActive ? 'secondary' : 'light'} className="rounded-0">
             <span className="visually-hidden">{t('channels.control')}</span>
           </Dropdown.Toggle>
           <Dropdown.Menu>
@@ -50,7 +43,7 @@ const Channel = ({ channel, handleShow }) => {
   }
   return (
     <NavItem as="li" key={id} className="w-100">
-      <Button variant={isActive(id)} onClick={() => setActive(channel)} className="w-100 rounded-0 text-start">
+      <Button variant={isActive ? 'secondary' : 'light'} onClick={() => setActive(id)} className="w-100 rounded-0 text-start">
         <span className="me-1">#</span>
         {name}
       </Button>
@@ -61,6 +54,7 @@ const Channel = ({ channel, handleShow }) => {
 const ChannelsContainer = ({ handleShow }) => {
   const { t } = useTranslation();
   const channels = useSelector(channelsSelectors.selectAll);
+  const { activeChannelId } = useSelector((state) => state.channels);
   return (
     <>
       <div className="d-flex justify-content-between mb-2 ps-4 pe-2">
@@ -69,7 +63,12 @@ const ChannelsContainer = ({ handleShow }) => {
       </div>
       <Nav fill as="ul" variant="pills" className="flex-column px-2">
         {channels.map((channel) => (
-          <Channel key={channel.id} channel={channel} handleShow={handleShow} />
+          <Channel
+            key={channel.id}
+            channel={channel}
+            isActive={activeChannelId === channel.id}
+            handleShow={handleShow}
+          />
         ))}
       </Nav>
     </>

@@ -5,15 +5,16 @@ import {
   Button,
   Form,
 } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { selectors } from '../../slices/channelsSlice';
+import { selectors, actions as channelsActions } from '../../slices/channelsSlice';
 import useApi from '../../hooks/useApi';
 
 const ModalAddChannel = ({ onHide }) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const api = useApi();
   const channelsNames = useSelector(selectors.selectAll).map((channel) => channel.name);
   const formik = useFormik({
@@ -21,9 +22,18 @@ const ModalAddChannel = ({ onHide }) => {
       name: '',
     },
     onSubmit: async (values) => {
-      await api.addChannel(values);
-      onHide();
-      toast.success(t('channels.channel_created'));
+      try {
+        const response = await api.addChannel(values);
+        dispatch(channelsActions.setActiveChannel(response.id));
+        onHide();
+        toast.success(t('channels.channel_created'));
+      } catch (err) {
+        if (err.message === 'operation has timed out') {
+          toast.error(t('errors.connect'));
+        } else {
+          toast.error(t('errors.unknown'));
+        }
+      }
     },
     validationSchema: yup.object({
       name: yup.string()

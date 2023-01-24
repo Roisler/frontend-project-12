@@ -12,9 +12,13 @@ const ModalRemoveChannel = (props) => {
   const api = useApi();
   const { modalInfo, onHide } = props;
   const handleRemove = async () => {
-    await api.removeChannel(modalInfo.channel);
-    toast.success(t('channels.channel_removed'));
-    onHide();
+    try {
+      await api.removeChannel(modalInfo.channel);
+      toast.success(t('channels.channel_removed'));
+      onHide();
+    } catch (err) {
+      toast.error(t('errors.connect'));
+    }
   };
   return (
     <Modal show centered>

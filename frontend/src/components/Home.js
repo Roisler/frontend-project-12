@@ -5,7 +5,7 @@ import {
   Row,
   Col,
 } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { actions as channelsActions } from '../slices/channelsSlice';
 import { actions as messagesActions } from '../slices/messagesSlice';
 import Chat from './Chat';
@@ -17,7 +17,7 @@ import useAuth from '../hooks/useAuth';
 
 const renderModal = (props) => {
   const {
-    modalInfo, hideModal, activeChannel,
+    modalInfo, hideModal,
   } = props;
   if (!modalInfo.type) {
     return null;
@@ -28,13 +28,11 @@ const renderModal = (props) => {
     <Modal
       modalInfo={modalInfo}
       onHide={hideModal}
-      activeChannel={activeChannel}
     />
   );
 };
 
 const Home = () => {
-  const [activeChannel, setActiveChannel] = useState({});
   const auth = useAuth();
   const { username } = auth.user;
   const [modalInfo, setModalInfo] = useState({ type: null, channel: null });
@@ -43,14 +41,6 @@ const Home = () => {
   const showModal = (type, channel = null) => () => setModalInfo({ type, channel });
 
   const dispatch = useDispatch();
-
-  const currentChannel = useSelector((state) => state.channels.activeChannel);
-
-  useEffect(() => {
-    if (currentChannel) {
-      setActiveChannel(currentChannel);
-    }
-  }, [currentChannel]);
 
   useEffect(() => {
     const getContent = async () => {
@@ -62,8 +52,7 @@ const Home = () => {
         const { channels, messages, currentChannelId } = response.data;
         dispatch(channelsActions.addChannels(channels));
         dispatch(messagesActions.addMessages(messages));
-        const defaultActiveChannel = channels.find(({ id }) => id === currentChannelId);
-        dispatch(channelsActions.setActiveChannel(defaultActiveChannel));
+        dispatch(channelsActions.setActiveChannel(currentChannelId));
       } catch (err) {
         if (err.response?.status === 401) {
           auth.logOut();
@@ -82,10 +71,10 @@ const Home = () => {
             <Channels handleShow={showModal} />
           </Col>
           <Col className="h-100 p-0">
-            <Chat user={username} activeChannel={activeChannel} />
+            <Chat user={username} />
           </Col>
         </Row>
-        {renderModal({ modalInfo, hideModal, activeChannel })}
+        {renderModal({ modalInfo, hideModal })}
       </Container>
     </>
   );

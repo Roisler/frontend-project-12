@@ -19,9 +19,13 @@ const ModalRenameChannel = ({ modalInfo, onHide }) => {
   const formik = useFormik({
     initialValues: modalInfo.channel,
     onSubmit: async (values) => {
-      await api.renameChannel(values);
-      toast.success(t('channels.channel_renamed'));
-      onHide();
+      try {
+        await api.renameChannel(values);
+        toast.success(t('channels.channel_renamed'));
+        onHide();
+      } catch (err) {
+        toast.error(t('errors.connect'));
+      }
     },
     validationSchema: yup.object({
       name: yup.string()

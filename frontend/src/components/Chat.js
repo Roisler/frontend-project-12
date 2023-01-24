@@ -10,26 +10,34 @@ import {
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import leoProfanity from 'leo-profanity';
+import { toast } from 'react-toastify';
 import { selectors as messagesSelectors } from '../slices/messagesSlice';
+import { selectors as channelsSelectors } from '../slices/channelsSlice';
 import useApi from '../hooks/useApi';
 
-const Chat = ({ user, activeChannel }) => {
+const Chat = ({ user }) => {
   const { t } = useTranslation();
   const api = useApi();
   const messages = useSelector(messagesSelectors.selectAll);
-
+  const channels = useSelector(channelsSelectors.selectAll);
+  const channelId = useSelector((state) => state.channels.activeChannelId);
+  const currentChannel = channels.find((channel) => channel.id === channelId);
   const formik = useFormik({
     initialValues: {
       body: '',
     },
-    onSubmit: (values) => {
-      const message = {
-        body: leoProfanity.clean(values.body),
-        username: user,
-        channelId: activeChannel.id,
-      };
-      api.sendNewMessage(message);
-      formik.resetForm();
+    onSubmit: async (values) => {
+      try {
+        const message = {
+          body: leoProfanity.clean(values.body),
+          username: user,
+          channelId,
+        };
+        await api.sendNewMessage(message);
+        formik.resetForm();
+      } catch (err) {
+        toast.error(t('errors.connect'));
+      }
     },
     validationSchema: yup.object({
       body: yup.string().required(t('validation.required')),
@@ -48,19 +56,19 @@ const Chat = ({ user, activeChannel }) => {
 
   useEffect(() => {
     inputRef.current?.focus();
-  }, [activeChannel]);
+  }, [channelId]);
 
   const getTotalMessages = (id) => messages.filter((message) => message.channelId === id).length;
 
   return (
     <div className="d-flex flex-column h-100">
       <div className="bg-light mb-4 p-3 shadow-sm small">
-        <p className="m-0"><b>{`# ${leoProfanity.clean(activeChannel.name)}`}</b></p>
-        <span className="text-muted">{t('messages.messageWithCount', { count: getTotalMessages(activeChannel.id) })}</span>
+        <p className="m-0"><b>{`# ${leoProfanity.clean(currentChannel?.name)}`}</b></p>
+        <span className="text-muted">{t('messages.messageWithCount', { count: getTotalMessages(channelId) })}</span>
       </div>
       <div id="messages-box" className="chat-messages overflow-auto px-5 ">
         {messages
-          .filter((message) => message.channelId === activeChannel.id)
+          .filter((message) => message.channelId === channelId)
           .map((message) => {
             if (messages.length === 0) {
               return null;
@@ -76,7 +84,7 @@ const Chat = ({ user, activeChannel }) => {
         <span ref={messagesEndRef} />
       </div>
       <div className="mt-auto px-5 py-3">
-        <Form onSubmit={formik.handleSubmit} className="py-1 border rounded-2">
+        <Form onSubmit={formik.handleSubmit} disabled={formik.isSubmitting} className="py-1 border rounded-2">
           <InputGroup>
             <Form.Control
               id="body"

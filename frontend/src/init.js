@@ -15,11 +15,14 @@ import { actions as messagesActions } from './slices/messagesSlice';
 const init = async () => {
   const socket = io();
   const wrapper = (event, data) => new Promise((resolve, reject) => {
-    socket.emit(event, data, (response) => {
+    socket.timeout(5000).volatile.emit(event, data, (err, response) => {
+      if (err) {
+        reject(err);
+      }
       if (response?.status === 'ok') {
         resolve(response.data);
       }
-      reject();
+      reject(err);
     });
   });
 
@@ -32,13 +35,11 @@ const init = async () => {
 
   socket.on('newChannel', (channel) => {
     store.dispatch(channelsActions.addChannel(channel));
-    store.dispatch(channelsActions.setActiveChannel(channel));
   });
 
   socket.on('renameChannel', (channel) => {
     const { id, name } = channel;
     store.dispatch(channelsActions.updateChannel({ id, changes: { name } }));
-    store.dispatch(channelsActions.setActiveChannel(channel));
   });
 
   socket.on('removeChannel', (channel) => {

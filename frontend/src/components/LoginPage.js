@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Form,
   FormControl,
@@ -25,7 +25,11 @@ const Login = () => {
   const [authFailed, setAuthFailed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const usernameRef = useRef(null);
 
+  useEffect(() => {
+    usernameRef.current?.focus();
+  }, []);
   const formik = useFormik({
     initialValues: {
       username: '',
@@ -56,12 +60,12 @@ const Login = () => {
     <>
       <NavBar />
       <Container fluid>
-        <Row>
-          <Col>
+        <Row className="justify-content-center align-content-center h-100">
+          <Col xs={12} md={8} xxl={6}>
             <Card className="shadow">
               <Card.Body className="row p-5">
                 <Col className="d-flex align-items-center justify-content-center">
-                  <Image roundedCircle src="loginImage.jpeg" alt="Войти" />
+                  <Image roundedCircle src="loginImage.jpeg" alt={t('basic.signin')} />
                 </Col>
                 <Form onSubmit={formik.handleSubmit} className="col-12 col-md-6 mt-3 mt-mb-0">
                   <h1 className="text-center mb-4">{t('basic.signin')}</h1>
@@ -72,6 +76,7 @@ const Login = () => {
                       type="text"
                       value={formik.values.username}
                       placeholder={t('basic.nickname')}
+                      ref={usernameRef}
                       onChange={formik.handleChange}
                       disabled={formik.isSubmitting}
                       isInvalid={authFailed}
