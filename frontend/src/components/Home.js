@@ -6,6 +6,8 @@ import {
   Col,
 } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { actions as channelsActions } from '../slices/channelsSlice';
 import { actions as messagesActions } from '../slices/messagesSlice';
 import Chat from './Chat';
@@ -33,6 +35,7 @@ const renderModal = (props) => {
 };
 
 const Home = () => {
+  const { t } = useTranslation();
   const auth = useAuth();
   const { username } = auth.user;
   const [modalInfo, setModalInfo] = useState({ type: null, channel: null });
@@ -56,6 +59,11 @@ const Home = () => {
       } catch (err) {
         if (err.response?.status === 401) {
           auth.logOut();
+        }
+        if (err.isAxiosError) {
+          toast.error(t('errors.connect'));
+        } else {
+          toast.error(t('errors.unknown'));
         }
       }
     };
